@@ -19,9 +19,12 @@ export const createSession = async (user: object) => {
     return { success: true };
 };
 
-export const userAuth = async (token: string) => {
+export const userAuth = async () => {
+    const cookieSession = await cookies();
+    const token = cookieSession.get("ClientToken")?.value
+
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwt.JwtPayload;
+        const decoded = jwt.verify(token!, process.env.JWT_SECRET as string) as jwt.JwtPayload;
         const { id, name, email, image, createdAt } = decoded;
         return { id, name, email, image, createdAt };
     } catch (err: any) {

@@ -4,16 +4,14 @@ import Link from "next/link";
 import LogoutButton from "./logout-button";
 
 export default async function  Navbar(){
-    const cookieSession = await cookies();
-    const token = cookieSession.get("ClientToken")?.value
-    const user = await userAuth(token!)
+    const user = await userAuth()
 
     return(
         <nav className="flex flex-row justify-between items-center px-20 pt-11">
             
             <h3 className="font-semibold text-2xl/7">CarFit</h3>
 
-            {token ? <div className="flex gap-4 justify-center items-center">
+            {user ? <div className="flex gap-4 justify-center items-center">
                 <p>{user.email}</p>
                 <LogoutButton/>
             </div> :<Link href="/sign-in">
