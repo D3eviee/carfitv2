@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
         if(!existingUser){
             return NextResponse.json({ error: "User doesn't exist" }, {status: 409});
         }else{
-            const decodedPassword = await bcrypt.compare(password, existingUser.password as string)
-            if(decodedPassword){
+            const isPasswordValid = await bcrypt.compare(password, existingUser.password as string)
+            if(isPasswordValid){
                 await createSession(existingUser)
                 return NextResponse.json({ message: true }, { status: 201 });
             }

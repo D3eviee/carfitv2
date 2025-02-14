@@ -7,7 +7,7 @@ import FormHeader from "@/components/form-header";
 import {useForm} from 'react-hook-form'
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { userAuth } from "@/lib/session";
+import bcrypt from "bcryptjs";
 
 export default function Onboardoarding() {
 
@@ -29,13 +29,16 @@ export default function Onboardoarding() {
   });
 
   const onSubmit = async (data: FormData) => {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const userData = {...data, password:hashedPassword}
+
     try {
       const response = await fetch("/api/onboarding", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(userData),
       });
 
       const responseData = await response.json();
