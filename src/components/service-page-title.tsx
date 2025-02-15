@@ -1,0 +1,41 @@
+import { Dot } from "lucide-react"
+
+export const ServicePageTitle = ({name, town, region}: {name:string, town:string, region:string}) => {
+    return (
+        <div className="flex flex-col gap-1">
+        <p className="flex place-items-baseline font-normal text-[15px] text-[#777777]">{`Mechanik | ${town} | ${region} | `} 
+          <span className="text-[#333333] ml-1">{name}</span>
+        </p>
+        <h1 className="m-0 p-0 text-[40px] text-[#11111] font-bold">LPM Mechanika Pojazdowa Leszek Patan</h1>
+        <div className="flex flex-row items-center">
+          <div className="flex flex-row gap-1.5 items-center">
+          <p className="text-[15px] font-bold text-[111111]">4.7</p>
+          <div className="flex flex-row gap-[3px]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFD700" viewBox="0 0 16 16">
+            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFD700"  viewBox="0 0 16 16">
+            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFD700" viewBox="0 0 16 16">
+            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFD700" viewBox="0 0 16 16">
+            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFD700" viewBox="0 0 16 16">
+            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+            </svg>
+          </div>
+          <p className="text-[15px] font-normal text-[111111]">(27)</p> 
+          </div>
+
+          <Dot/>
+          <p className="text-[15px] font-normal text-[009600]">Otwarte: 9:00 - 20:00</p>
+
+          <Dot/>
+          <p className="text-[15px] font-normal text-[111111]">{`${town}, ${region}`}</p>
+        </div>
+        </div>
+    )
+}

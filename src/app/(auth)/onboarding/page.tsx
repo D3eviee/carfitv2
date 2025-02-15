@@ -72,12 +72,12 @@ export default function Onboardoarding() {
           <FormHeader title="Wellcome to CarFit" subtitle="Create an account"/>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-          <label htmlFor="name" className="inline-block text-[#333] text-[14px] mb-[5px]">Name</label>
+          <label htmlFor="name" className="inline-block text-[#333] text-[14px] mb-[5px]">Full name</label>
             <input
               {...register('name')}
               type="text"
               id="name"
-              placeholder="carfit@gmail.com"
+              placeholder="Jacky Macky"
               className="border-[0.5px] border-[#CCCCCC] w-full px-[7px] py-[5px] text-[#111] text-sm rounded-md mb-[15px] focus:outline-[#333333]"
             />
 
