@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import login_image from "../../../../public/login_image.jpg";
+import login_image from "../../../../../public/login_image.jpg"
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import FormHeader from "@/components/form-header";

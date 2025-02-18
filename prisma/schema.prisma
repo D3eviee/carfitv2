@@ -14,12 +14,28 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String?
-  email     String   @unique
-  password  String?
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
   image     String?
   provider  String? // "credentials" lub "google"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Service {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String   @unique
+  image     String?
+  provider  String? // "credentials" lub "google"
+  town      String
+  zipcode   String
+  district  String
+  street    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

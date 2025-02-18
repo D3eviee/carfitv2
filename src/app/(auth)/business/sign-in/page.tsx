@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import login_image from "../../../../public/login_image.jpg";
+import login_image from "../../../../../public/login_image.jpg"
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import FormHeader from "@/components/form-header";
@@ -50,7 +50,7 @@ export default function SignIn() {
 
   return (
     <div className="w-full h-screen flex">
-      <Link href="/" className="absolute left-[80px] top-[40px]">
+      <Link href="/business" className="absolute left-[80px] top-[40px]">
         <div className=" bg-[#111] rounded-md hover:bg-[#222222] border p-1">
           <ArrowLeft color="#FFFFFF" className="size-7" />
         </div>
@@ -59,7 +59,7 @@ export default function SignIn() {
       <div className="w-1/2 bg-[#FDFCFF] text-white flex flex-col items-center justify-center">
         <div className="w-[380px] bg-[#FFFFFF] flex flex-col px-[45px] py-[75px] gap-[30px] rounded-xl shadow-[0px_0px_35px_5px_#D4D4D4]">
 
-          <FormHeader title="Wellcome back" subtitle="Log in into your account"/>
+          <FormHeader title="Wellcome back" subtitle="Log in into your business account"/>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <label htmlFor="email" className="inline-block text-[#333] text-[14px] mb-[5px]">Email</label>
@@ -90,7 +90,7 @@ export default function SignIn() {
               <span className="text-xs font-normal text-[#333]"> Policy and Terms
             </span></p>
               <p className="mt-[25px] text-center text-[#333333] text-xs font-light">Don't have an account? 
-                <Link href='/onboarding'><span className="text-blue-900 font-semibold"> Create</span></Link>
+                <Link href='/business/onboarding'><span className="text-blue-900 font-semibold"> Create</span></Link>
               </p>
           </div>
 
