@@ -3,19 +3,18 @@ import Image from "next/image";
 import login_image from "../../../../../public/login_image.jpg";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import FirstStep from "@/components/onboarding/first-step";
-import SecondStep from "@/components/onboarding/second-step";
+import OnboardingEmail from "@/components/onboarding/onboarding-email";
+import OnboardingCategory from "@/components/onboarding/onboarding-category";
 import ThirdStep from "@/components/onboarding/third-step";
-import ForthStep from "@/components/onboarding/forth-step";
 import FifthStep from "@/components/onboarding/fifth-step";
 import { OnboardingNav } from "@/components/onboarding/onboarding-nav";
-import { NextStepButton } from "@/components/onboarding/next-step-button";
 import { useState } from "react";
 import FormHeader from "@/components/form-header";
+import OnboardingAdress from "@/components/onboarding/onboarding-address";
 
 export default function Onboardoarding() {
   const [activePage, setActivePage] = useState<number>(0)
-  let activeForm = <FirstStep />
+  let activeForm = <OnboardingEmail onClick={() => setActivePage((prev) => prev + 1)}/>
 
   const formHeadings = [
     {title: "Welcome to CarFit" , subtitle: "Create account for your business and let it grow"},
@@ -27,22 +26,22 @@ export default function Onboardoarding() {
 
   switch (activePage) {
     case 0:
-      activeForm = <FirstStep />
+      activeForm = <OnboardingEmail onClick={() => setActivePage((prev) => prev + 1)}/>
       break;
     case 1:
-      activeForm = <SecondStep onClick={() => setActivePage((prev) => prev + 1)}/>
+      activeForm = <OnboardingCategory onClick={() => setActivePage((prev) => prev + 1)}/>
       break;
     case 2:
-      activeForm = <ThirdStep />
+      activeForm = <ThirdStep/>
       break;
     case 3:
-      activeForm = <ForthStep />
+      activeForm = <OnboardingAdress onClick={() => setActivePage((prev) => prev + 1)} />
       break;
     case 4:
       activeForm = <FifthStep />
       break;
     default:
-      activeForm = <FirstStep />
+      activeForm = <OnboardingEmail onClick={() => setActivePage((prev) => prev + 1)}/>
   }
 
   return (
@@ -68,7 +67,6 @@ export default function Onboardoarding() {
           {/*FORM WITH PROGRESS BUTTON*/}
           <div className="px-10">
             {activeForm}
-            {activePage == 1 ? <> </> : <NextStepButton onClick={() => setActivePage((prev) => prev + 1)}/>}
           </div>
 
           {/*SWITCH TO LOGIN IF ACCOUNT EXISTS*/}
