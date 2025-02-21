@@ -5,12 +5,12 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import OnboardingEmail from "@/components/onboarding/onboarding-email";
 import OnboardingCategory from "@/components/onboarding/onboarding-category";
-import ThirdStep from "@/components/onboarding/third-step";
-import FifthStep from "@/components/onboarding/fifth-step";
 import { OnboardingNav } from "@/components/onboarding/onboarding-nav";
 import { useState } from "react";
 import FormHeader from "@/components/form-header";
 import OnboardingAdress from "@/components/onboarding/onboarding-address";
+import OnboardingBusienssInformation from "@/components/onboarding/onboarding-business-info";
+import OnboardingWorkingDays from "@/components/onboarding/onboarding-working-days";
 
 export default function Onboardoarding() {
   const [activePage, setActivePage] = useState<number>(0)
@@ -32,16 +32,16 @@ export default function Onboardoarding() {
       activeForm = <OnboardingCategory onClick={() => setActivePage((prev) => prev + 1)}/>
       break;
     case 2:
-      activeForm = <ThirdStep/>
+      activeForm = <OnboardingBusienssInformation onClick={() => setActivePage((prev) => prev + 1)} />
       break;
     case 3:
       activeForm = <OnboardingAdress onClick={() => setActivePage((prev) => prev + 1)} />
       break;
     case 4:
-      activeForm = <FifthStep />
+      activeForm = <OnboardingWorkingDays/>
       break;
     default:
-      activeForm = <OnboardingEmail onClick={() => setActivePage((prev) => prev + 1)}/>
+      activeForm = <div>ERROR OCCURED</div>
   }
 
   return (
@@ -49,7 +49,7 @@ export default function Onboardoarding() {
      {/*LEFT SIDE FORM*/}
       <div className="w-1/2 bg-[#FDFCFF] text-white flex flex-col items-center justify-center">
         {/*BACK BUTTON*/}
-        <Link href="/business" className="absolute left-[80px] top-[40px]">
+        <Link href="/business" className="absolute left-[40px] top-[40px]">
           <div className=" bg-[#111] rounded-md hover:bg-[#222222] border p-1">
             <ArrowLeft color="#FFFFFF" className="size-7"/>
           </div>
@@ -57,25 +57,16 @@ export default function Onboardoarding() {
 
         {/*FORM BOX*/}
         <div className="w-[380px] max-h-[63s0px] bg-[#FFFFFF] flex flex-col rounded-xl shadow-[0px_0px_35px_5px_#D4D4D4] pb-[50px]">
+          {/*FORM NAVIGATION*/}
           {activePage == 0 ? <> </> : <OnboardingNav onClick={() => setActivePage((prev) => prev - 1)} />}
-          {/*NAVIGATION TAB FOR FORM STEPS*/}
-          <FormHeader
-            title={formHeadings[activePage].title}
-            subtitle={formHeadings[activePage].subtitle}
-          />
-
-          {/*FORM WITH PROGRESS BUTTON*/}
+          {/*FORM HEADER*/}
+          <FormHeader title={formHeadings[activePage].title} subtitle={formHeadings[activePage].subtitle}/>
+          {/*FORM*/}
           <div className="px-10">
             {activeForm}
           </div>
-
-          {/*SWITCH TO LOGIN IF ACCOUNT EXISTS*/}
-          {activePage != 0 ? <> </> : 
-            <p className="text-center text-[#333333] text-xs font-light pt-5">Already have an account? 
-            <Link href='/sign-in'><span className="text-blue-900 font-semibold"> Login</span></Link>
-            </p>
-          }
         </div>
+
       </div>
 
       {/*RIGHT SIDE IMAGE*/}

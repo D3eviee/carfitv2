@@ -6,6 +6,7 @@ import { FormLabel } from '../form-label';
 import { FormError } from '../form-error';
 import { FormButton } from '../form-button';
 import { FormInput } from '../form-input';
+import { useOnboardingStore } from '@/lib/store';
 
 export default function OnboardingAdress({ onClick = () => {} }){
   //DEFINING FORM TYPES
@@ -18,22 +19,26 @@ export default function OnboardingAdress({ onClick = () => {} }){
 
   type OnboardingAddress = z.infer<typeof onboardingAddress>;
 
+  const setData = useOnboardingStore((state)=>state.setData)
+
   //DEFINING USEFORM HOOK
   const { register, handleSubmit, formState, trigger } =
       useForm<OnboardingAddress>({
         resolver: zodResolver(onboardingAddress),
         defaultValues: {
-          businessTown: "",
-          businessZipcode: "",
-          businessDistrict: "",
-          businessStreet: ""
+          businessTown: useOnboardingStore((state)=> state.businessTown),
+          businessZipcode: useOnboardingStore((state)=> state.businessZipcode),
+          businessDistrict: useOnboardingStore((state)=> state.businessDistrict),
+          businessStreet: useOnboardingStore((state)=> state.businessStreet),
         },
       });
 
     const onSubmit = async (data: OnboardingAddress) => {
-      console.log(data)
       const isValid = await trigger()
-      if(isValid) onClick();
+      if(isValid){
+        onClick();
+        setData(data)
+      }
     };
 
   return(
