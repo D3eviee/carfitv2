@@ -4,6 +4,7 @@ import Image from "next/image";
 import wheels_image from '../../../public/wheels.jpg'
 import car_service from '../../../public/car_service.jpg'
 import Link from "next/link";
+import { BusinessOnboardingSchema } from "@/lib/schema";
 
 
 const dummmyCompany = {
@@ -11,15 +12,41 @@ const dummmyCompany = {
   name: "LPM Mechanika Pojazdowa Leszek Patan"
 }
 
+const getRecommended = async () =>{
+  try{
+    const response = await fetch("http://localhost:3000/api/recommended", {
+      method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+    })
+
+    const responseData = await response.json();
+
+    responseData
+    if(response.ok){
+      console.log(responseData)
+      return responseData
+    }
+
+    return response
+
+  }catch(error){
+    console.log(error)
+    console.log("ERROR CLIENT")
+  }
+}
+
 const createLinkFormat = (id:number, companyName:string) : string  => {
   const companyNameToLowerCase= companyName.toLowerCase()
   const companyLink = companyNameToLowerCase.replaceAll(" ", "-")
-
   return `/service/${companyLink}-${id}`
 }
 
 
-export default function Home() {
+export default async function  Home() {
+  const data = await getRecommended();
+
   return (
     <div className="mt-64 mx-64 mb-64">
       <div className="mb-11">
@@ -113,7 +140,9 @@ export default function Home() {
         <h3 className="font-md text-[#333] text-[25px]">Recommended</h3>
 
         <div className="mt-[30px] flex flex-row gap-8 overflow-scroll">
-          <Link href={createLinkFormat(dummmyCompany.id, dummmyCompany.name)}>
+        {data.map((service) => {
+          return (
+            <Link href={createLinkFormat(dummmyCompany.id, dummmyCompany.name)} key={service.id}>
             <div className="flex-none w-[324px] border-[0.5px] border-[#D4D4D4] rounded-[15px] overflow-hidden shadow-[0px_1px_4px_1px_#ACACAC40]">
               <div className="h-[178px] overflow-hidden">
                 <Image src={car_service} alt="car_service" className="w-full h-full  rounded-none"/>
@@ -121,10 +150,10 @@ export default function Home() {
 
               <div className="px-[15px] pt-[10px] pb-[15px] bg-white">
                 <h3 className="font-black tracking-normal text-[#333333] text-[16px] mb-0">
-                  Auto-Klima Oliwier Krywko
+                  {service.name}
                 </h3>
                 <p className="font-light text-[#777777] text-[14px] mb-1">
-                  Zgoda 54 | 60-122 Poznań
+                {service.street} | {service.zipcode} | {service.town}
                 </p>
                 
                 <div className="flex flex-row items-center mb-2">
@@ -139,59 +168,10 @@ export default function Home() {
               </div>  
             </div>
           </Link>
-          
+          )
+          })}
 
-          <div className="flex-none w-[324px] border-[0.5px] border-[#D4D4D4] rounded-[15px] overflow-hidden shadow-[0px_1px_4px_1px_#ACACAC40]">
-            <div className="h-[178px] overflow-hidden">
-              <Image src={car_service} alt="car_service" className="w-full h-full  rounded-none"/>
-            </div>
-
-            <div className="px-[15px] pt-[10px] pb-[15px] bg-white">
-              <h3 className="font-black tracking-normal text-[#333333] text-[16px] mb-0">
-                Auto-Klima Oliwier Krywko
-              </h3>
-              <p className="font-light text-[#777777] text-[14px] mb-1">
-                Zgoda 54 | 60-122 Poznań
-              </p>
-              
-              <div className="flex flex-row items-center mb-2">
-                <p className="font-normal text-[#333333] text-[15px]">4.7</p>
-                <Star fill="gold" stroke="none" className="size-5 ml-[5px] mr-[8px]"/>
-                <p className="font-normal text-[#333333] text-[15px]">(120)</p>
-              </div>
-              
-              <p className="inline rounded-2xl text-[11px] font-black text-[#000000] border-[0.5px] border-[#777777] py-[5px] px-[7px]">
-                Car Detailing
-              </p>
-            </div>  
-          </div>
-
-          <div className="flex-none w-[324px] border-[0.5px] border-[#D4D4D4] rounded-[15px] overflow-hidden shadow-[0px_1px_4px_1px_#ACACAC40]">
-            <div className="h-[178px] overflow-hidden">
-              <Image src={car_service} alt="car_service" className="w-full h-full  rounded-none"/>
-            </div>
-
-            <div className="px-[15px] pt-[10px] pb-[15px] bg-white">
-              <h3 className="font-black tracking-normal text-[#333333] text-[16px] mb-0">
-                Auto-Klima Oliwier Krywko
-              </h3>
-              <p className="font-light text-[#777777] text-[14px] mb-1">
-                Zgoda 54 | 60-122 Poznań
-              </p>
-              
-              <div className="flex flex-row items-center mb-2">
-                <p className="font-normal text-[#333333] text-[15px]">4.7</p>
-                <Star fill="gold" stroke="none" className="size-5 ml-[5px] mr-[8px]"/>
-                <p className="font-normal text-[#333333] text-[15px]">(120)</p>
-              </div>
-              
-              <p className="inline rounded-2xl text-[11px] font-black text-[#000000] border-[0.5px] border-[#777777] py-[5px] px-[7px]">
-                Car Detailing
-              </p>
-            </div>  
-          </div>
-
-          <div className="flex-none w-[324px] border-[0.5px] border-[#D4D4D4] rounded-[15px] overflow-hidden shadow-[0px_1px_4px_1px_#ACACAC40]">
+          <div className="flex-none w-[324px] h-[325px] border-[0.5px] border-[#D4D4D4] rounded-[15px] overflow-hidden shadow-[0px_1px_4px_1px_#ACACAC40]">
             <div className="h-[178px] overflow-hidden ">
               <Image src={car_service} alt="car_service" className="w-full h-full  rounded-none"/>
             </div>

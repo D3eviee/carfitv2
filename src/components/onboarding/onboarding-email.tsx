@@ -8,6 +8,7 @@ import { FormLabel } from "../form-label";
 import { FormButton } from "../form-button";
 import Link from "next/link";
 import { useOnboardingStore } from "@/lib/store";
+import { checkIfEmailExists } from "@/actions/actions";
 
 export default function OnboardingEmail({ onClick = () => {} }) {
   //DEFINING FORM TYPES
@@ -21,7 +22,7 @@ export default function OnboardingEmail({ onClick = () => {} }) {
 
 
   //DEFINING USEFORM HOOK
-  const { register, handleSubmit, formState, trigger } =
+  const { register, handleSubmit, formState, trigger, setError } =
     useForm<OnboardingEmail>({
       resolver: zodResolver(onboardingEmail),
       defaultValues: {
@@ -35,8 +36,15 @@ export default function OnboardingEmail({ onClick = () => {} }) {
     const isValid = await trigger()
 
     if(isValid){
-      setData(data)
-      onClick()
+      const isEmailAvalable = await checkIfEmailExists(data.email);
+
+      if(isEmailAvalable.isEmailAvalable){
+        setError("email", { type: "custom", message: ""}, {shouldFocus:true})
+        setData(data)
+        onClick()
+      }else{
+        setError("email", { type: "custom", message: isEmailAvalable.message}, {shouldFocus:true})
+      }
     }
   };
 

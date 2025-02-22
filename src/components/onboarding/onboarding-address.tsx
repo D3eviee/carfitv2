@@ -45,7 +45,7 @@ export default function OnboardingAdress({ onClick = () => {} }){
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <div>
         <FormLabel text="Town" htmlFor="businessTown" />
-        <FormInput type="text" id="businessTown" placeholder="Ponznań" register={register}/>
+        <FormInput type="text" id="businessTown" placeholder="Warsaw" register={register}/>
         <FormError>{formState.errors.businessTown?.message}</FormError>
         </div>
 
@@ -68,7 +68,6 @@ export default function OnboardingAdress({ onClick = () => {} }){
         </div>
 
         <FormButton label="Continue" disabled={formState.isValidating}/>
-
       </form>    
   )
 }

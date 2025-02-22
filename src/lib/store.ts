@@ -1,12 +1,25 @@
 import { create } from "zustand";
 import { BusinessOnboardingSchema } from "./schema";
 
-type OnboardingState = Partial<BusinessOnboardingSchema> & {
+export type OnboardingState = Partial<BusinessOnboardingSchema> & {
     setData: (data: Partial<BusinessOnboardingSchema>) => void;
+    resetData: () => void
 }
 
 export const useOnboardingStore = create<OnboardingState>()((set) => ({
-    setData: (data) => set(data)
+    setData: (data) => set(data),
+    resetData: () => set({
+      email: "",
+      password: "",
+      businessCategory: "",
+      businessName: "",
+      businessOwner: "",
+      businessPhone: "",
+      businessTown: "",
+      businessZipcode: "",
+      businessDistrict: "",
+      businessStreet: "",
+    })
 }))
 
 interface WorkingDaysStore {

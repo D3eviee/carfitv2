@@ -28,9 +28,10 @@ model Service {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  name      String
   phone     String
+  name      String
   owner     String
+  category  String
   image     String?
   provider  String? // "credentials" lub "google"
   town      String
@@ -55,3 +56,12 @@ model WorkingDay {
   service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
+
+model Review {
+  id  String @id @default(uuid())
+  serviceID String
+  clientId String
+  content String
+  rate Int
+  createdAt DateTime @default(now())
+}

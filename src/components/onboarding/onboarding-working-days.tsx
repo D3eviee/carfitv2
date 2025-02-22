@@ -1,11 +1,12 @@
 'use client'
 import { Pen } from "lucide-react";
 import { FormButton } from "../form-button";
+import bcrypt from "bcryptjs";
 import { useState } from "react";
 import useWorkingDays, { useOnboardingStore } from "@/lib/store";
 import { OnboardingEditHoursModal } from "./onboarding-edit-hours-modal";
-import { createBusinessAccount } from "@/actions/actions";
-import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { createService } from "@/actions/actions";
 
 
 export default function OnboardingWorkingDays() {
@@ -13,7 +14,11 @@ export default function OnboardingWorkingDays() {
   const [editedDay, setEditedDay] = useState<WorkingDay>({ isOpen: false, day: "", open: "", close: "" })
   const workingDays = useWorkingDays((state) => state.days);
   const businessData = useOnboardingStore((state) => state)
+  const setData = useOnboardingStore((state)=> state.resetData)
+  const [error, setError] = useState<string>('')
 
+  const router = useRouter();
+  
   const handleOpeningModal = (day:WorkingDay) => {
     setOpenModal(true);
     setEditedDay(day)
@@ -24,24 +29,23 @@ export default function OnboardingWorkingDays() {
     setEditedDay({ isOpen: false, day: "", open: "", close: "" })
   }
 
-  const handleSubmit = async () => {
-    const businessDataValidated = {
-      email: businessData.email!,
-      password: businessData.password!,
-      businessCategory: businessData.businessCategory!,
-      businessName: businessData.businessName!,
-      businessOwner: businessData.businessOwner!,
-      businessPhone: businessData.businessPhone!,
-      policyAcceptance: businessData.policyAcceptance!,
-      businessTown: businessData.businessTown!,
-      businessZipcode: businessData.businessZipcode!,
-      businessDistrict: businessData.businessDistrict!,
-      businessStreet: businessData.businessStreet!
-    };
-    
-    await createBusinessAccount(businessDataValidated, workingDays);
 
-  }
+  const handleSubmit = async () => {
+      const hashedPassword = await bcrypt.hash(businessData.password!, 10)
+      const data = {...businessData, password: hashedPassword}
+      
+      const result = await createService(data, workingDays)
+      console.log(result)
+      if(result.status == "failed"){
+        setError(result.message)
+      }
+      else{
+        setData()
+        router.push('/business')
+      }
+
+      
+  };
 
   return (<>
     {openModal ? <OnboardingEditHoursModal day={editedDay} close={handleClosingModal}/> : <></>}
@@ -57,6 +61,7 @@ export default function OnboardingWorkingDays() {
       </div>
 
       <FormButton label="Create account" onClick={handleSubmit}/>
+      <p>{error}</p>
     </div>
     </>
   );
