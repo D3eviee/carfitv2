@@ -1,12 +1,18 @@
+import { BusinessOnboardingSchema } from "@/lib/schema"
+import { getDate, getDay, getISODay } from "date-fns"
 import { Dot } from "lucide-react"
 
-export const ServicePageTitle = ({name, town, region}: {name:string, town:string, region:string}) => {
+export const ServicePageTitle = ({data, workingTime}) => {
+    const x = getDay(new Date())
+    const today = workingTime[x-1]
+    const openingData = `Otwarte: ${today.open} - ${today.close}`
+
     return (
         <div className="flex flex-col gap-1">
-        <p className="flex place-items-baseline font-normal text-[15px] text-[#777777]">{`Mechanik | ${town} | ${region} | `} 
-          <span className="text-[#333333] ml-1">{name}</span>
+        <p className="flex place-items-baseline font-normal text-[15px] text-[#777777]">{`${data.category} | ${data.town} | ${data.district} |`} 
+          <span className="text-[#333333] ml-1">{data.name}</span>
         </p>
-        <h1 className="m-0 p-0 text-[40px] text-[#11111] font-bold">LPM Mechanika Pojazdowa Leszek Patan</h1>
+        <h1 className="m-0 p-0 text-[40px] text-[#11111] font-bold">{data.name}</h1>
         <div className="flex flex-row items-center">
           <div className="flex flex-row gap-1.5 items-center">
           <p className="text-[15px] font-bold text-[111111]">4.7</p>
@@ -31,10 +37,10 @@ export const ServicePageTitle = ({name, town, region}: {name:string, town:string
           </div>
 
           <Dot/>
-          <p className="text-[15px] font-normal text-[009600]">Otwarte: 9:00 - 20:00</p>
+          <p className="text-[15px] font-normal text-[009600]">{today.isOpen ? openingData : "Zamknięte"}</p>
 
           <Dot/>
-          <p className="text-[15px] font-normal text-[111111]">{`${town}, ${region}`}</p>
+          <p className="text-[15px] font-normal text-[111111]">{`${data.district}, ${data.town} `}</p>
         </div>
         </div>
     )

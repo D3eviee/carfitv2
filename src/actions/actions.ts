@@ -1,6 +1,6 @@
 'use server'
 import prisma from "@/lib/db";
-import { BusinessOnboardingSchema } from "@/lib/schema";
+import { createServiceSession, createSession } from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -63,8 +63,79 @@ export const createService = async (data: OnboardingState, workingDays: WorkingD
                     })
                 ))
         }
-        return {status: "success", message:"Creating user compleded"}
+
+        //create sesssion
+        const session = await createServiceSession(service)
+        if (session.success) {
+            return { success: true , status: 200 };
+        }
+
+        return {status: "success", message:"Creted user but no session"}
     } catch {
         return {status: "failed", message:"Creating user failed"}
     }
+    
 }
+
+export const getServiceData = async(id: string) => {
+    try{
+        const serviceData = await prisma.service.findFirst({
+            where: {
+                id: id
+            }
+        }) 
+
+        return serviceData
+    }
+    catch(error){
+        console.log("Error while trying to retreieve service data:", error)
+    }
+}
+
+export const getWorkingTimeData = async(id: string) => {
+    try{
+        const serviceData = await prisma.workingDay.findMany({
+            where: {
+                serviceId: id
+            },
+            orderBy: {
+                dayOfWeek: "asc"
+            }
+        })
+
+
+        return serviceData
+    }
+    catch(error){
+        console.log("Error while trying to retreieve working time data:", error)
+    }
+}
+
+export const getServiceReviews = async(id: string) => {
+    try{
+        const serviceReviews = await prisma.review.findMany({
+            where: {
+                serviceID: id
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+
+        return serviceReviews
+    }
+    catch(error){
+        console.log("Error while trying to retreieve reviews", error)
+    }
+}
+
+export const getRecommendedServices = async () => {
+    try {
+        const recommended = await prisma.service.findMany({ take: 5 });
+        return recommended
+
+    } catch (error) {
+        console.error("Error fetching recommended services:", error);
+        return;
+    }
+} 

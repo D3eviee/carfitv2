@@ -29,7 +29,6 @@ export default function OnboardingWorkingDays() {
     setEditedDay({ isOpen: false, day: "", open: "", close: "" })
   }
 
-
   const handleSubmit = async () => {
       const hashedPassword = await bcrypt.hash(businessData.password!, 10)
       const data = {...businessData, password: hashedPassword}
@@ -41,10 +40,8 @@ export default function OnboardingWorkingDays() {
       }
       else{
         setData()
-        router.push('/business')
-      }
-
-      
+        router.push('/dashboard')
+      }      
   };
 
   return (<>
@@ -61,7 +58,7 @@ export default function OnboardingWorkingDays() {
       </div>
 
       <FormButton label="Create account" onClick={handleSubmit}/>
-      <p>{error}</p>
+      <p color="red">{error}</p>
     </div>
     </>
   );
