@@ -11,6 +11,8 @@ import FormHeader from "@/components/form-header";
 import OnboardingAdress from "@/components/onboarding/onboarding-address";
 import OnboardingBusienssInformation from "@/components/onboarding/onboarding-business-info";
 import OnboardingWorkingDays from "@/components/onboarding/onboarding-working-days";
+import { ErrorAlertContainer } from "@/components/error-alert-container";
+import { useContainerErrorStore } from "@/lib/store";
 
 export default function Onboardoarding() {
   const [activePage, setActivePage] = useState<number>(0)
@@ -45,34 +47,36 @@ export default function Onboardoarding() {
   }
 
   return (
-    <div className="w-full h-screen flex">
-     {/*LEFT SIDE FORM*/}
-      <div className="w-1/2 bg-[#FDFCFF] text-white flex flex-col items-center justify-center">
-        {/*BACK BUTTON*/}
-        <Link href="/business" className="absolute left-[40px] top-[40px]">
-          <div className=" bg-[#111] rounded-md hover:bg-[#222222] border p-1">
-            <ArrowLeft color="#FFFFFF" className="size-7"/>
-          </div>
-        </Link>
+    <ErrorAlertContainer>
+      <div className="w-full h-screen flex">
+      {/*LEFT SIDE FORM*/}
+        <div className="w-1/2 bg-[#FDFCFF] text-white flex flex-col items-center justify-center">
+          {/*BACK BUTTON*/}
+          <Link href="/business" className="absolute left-[40px] top-[40px]">
+            <div className=" bg-[#111] rounded-md hover:bg-[#222222] border p-1">
+              <ArrowLeft color="#FFFFFF" className="size-7"/>
+            </div>
+          </Link>
 
-        {/*FORM BOX*/}
-        <div className="w-[380px] max-h-[63s0px] bg-[#FFFFFF] flex flex-col rounded-xl shadow-[0px_0px_35px_5px_#D4D4D4] pb-[50px]">
-          {/*FORM NAVIGATION*/}
-          {activePage == 0 ? <> </> : <OnboardingNav onClick={() => setActivePage((prev) => prev - 1)} />}
-          {/*FORM HEADER*/}
-          <FormHeader title={formHeadings[activePage].title} subtitle={formHeadings[activePage].subtitle}/>
-          {/*FORM*/}
-          <div className="px-10">
-            {activeForm}
+          {/*FORM BOX*/}
+          <div className="w-[380px] max-h-[63s0px] bg-[#FFFFFF] flex flex-col rounded-xl shadow-[0px_0px_35px_5px_#D4D4D4] pb-[50px]">
+            {/*FORM NAVIGATION*/}
+            {activePage == 0 ? <> </> : <OnboardingNav onClick={() => setActivePage((prev) => prev - 1)} />}
+            {/*FORM HEADER*/}
+            <FormHeader title={formHeadings[activePage].title} subtitle={formHeadings[activePage].subtitle}/>
+            {/*FORM*/}
+            <div className="px-10">
+              {activeForm}
+            </div>
           </div>
+
         </div>
 
+        {/*RIGHT SIDE IMAGE*/}
+        <div className="w-1/2 text-white">
+          <Image src={login_image} alt="login image" className="h-full object-cover"/>
+        </div>
       </div>
-
-      {/*RIGHT SIDE IMAGE*/}
-      <div className="w-1/2 text-white">
-        <Image src={login_image} alt="login image" className="h-full object-cover"/>
-      </div>
-    </div>
+    </ErrorAlertContainer>
   );
 }

@@ -3,7 +3,7 @@ import { Pen } from "lucide-react";
 import { FormButton } from "../form-button";
 import bcrypt from "bcryptjs";
 import { useState } from "react";
-import useWorkingDays, { useOnboardingStore } from "@/lib/store";
+import useWorkingDays, { useContainerErrorStore, useOnboardingStore } from "@/lib/store";
 import { OnboardingEditHoursModal } from "./onboarding-edit-hours-modal";
 import { useRouter } from "next/navigation";
 import { createService } from "@/actions/actions";
@@ -16,6 +16,8 @@ export default function OnboardingWorkingDays() {
   const businessData = useOnboardingStore((state) => state)
   const setData = useOnboardingStore((state)=> state.resetData)
   const [error, setError] = useState<string>('')
+
+  const setContainerError = useContainerErrorStore(state => state.setContainerError)
 
   const router = useRouter();
   
@@ -34,13 +36,13 @@ export default function OnboardingWorkingDays() {
       const data = {...businessData, password: hashedPassword}
       
       const result = await createService(data, workingDays)
-      console.log(result)
       if(result.status == "failed"){
-        setError(result.message)
+        setContainerError(result.message!)
       }
       else{
         setData()
         router.push('/dashboard')
+        setContainerError("Success. Registration copleted!")
       }      
   };
 

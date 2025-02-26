@@ -6,6 +6,17 @@ export type OnboardingState = Partial<BusinessOnboardingSchema> & {
     resetData: () => void
 }
 
+export type ContainerError = {
+  errorMessage: string
+  setContainerError: (error: string) => void
+}
+
+export const useContainerErrorStore = create<ContainerError>()((set) => ({
+  errorMessage: "",
+  setContainerError: (error) => set(() => ({ errorMessage: error}))
+  
+}))
+
 export const useOnboardingStore = create<OnboardingState>()((set) => ({
     setData: (data) => set(data),
     resetData: () => set({

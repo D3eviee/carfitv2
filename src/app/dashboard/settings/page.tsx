@@ -1,14 +1,8 @@
-'use client'
-import { useState } from "react";
 import { GoHome } from "react-icons/go";
 import Link from "next/link";
 import DashboardContentContainer from "@/components/dashboard/dashboard-content-container";
 
-
 export default function SettingsPage() {
-
-  const [activePage, setActivePage] = useState(0);
-
   return (
     <DashboardContentContainer>
       <div className="mb-[50px]">
@@ -16,9 +10,9 @@ export default function SettingsPage() {
         <h3 className="mt-[5px] p-0 text-sm font-light">Manage your business information, set up marketing options, calendar, mange workers permissions and more.</h3>
       </div>
       <div className="flex flex-row gap-[20px] text-xs font-normal">
-        <div className="py-[7px] px-[20px] text-[#333333] shadow-[0px_1px_2px_0px_#333333] border-[0.5px] border-[#333333] hover:cursor-pointer hover:bg-[#EEE] rounded-[5px]" onClick={()=>setActivePage(0)}>Business</div>
-        <div className="py-[7px] px-[20px] text-[#333333] shadow-[0px_1px_2px_0px_#333333] border-[0.5px] border-[#333333] hover:cursor-pointer hover:bg-[#EEE] rounded-[5px]" onClick={()=>setActivePage(1)}>Marketing</div>
-        <div className="py-[7px] px-[20px] text-[#333333] shadow-[0px_1px_2px_0px_#333333] border-[0.5px] border-[#333333] hover:cursor-pointer hover:bg-[#EEE] rounded-[5px]" onClick={()=>setActivePage(2)}>Other</div>
+        <div className="py-[7px] px-[20px] text-[#333333] shadow-[0px_1px_2px_0px_#333333] border-[0.5px] border-[#333333] hover:cursor-pointer hover:bg-[#EEE] rounded-[5px]" >Business</div>
+        <div className="py-[7px] px-[20px] text-[#333333] shadow-[0px_1px_2px_0px_#333333] border-[0.5px] border-[#333333] hover:cursor-pointer hover:bg-[#EEE] rounded-[5px]">Marketing</div>
+        <div className="py-[7px] px-[20px] text-[#333333] shadow-[0px_1px_2px_0px_#333333] border-[0.5px] border-[#333333] hover:cursor-pointer hover:bg-[#EEE] rounded-[5px]">Other</div>
       </div>
       
       <div className="w-[1077px] mt-[30px] grid gap-[30px] grid-cols-3">
