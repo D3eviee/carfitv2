@@ -25,24 +25,26 @@ model User {
 }
 
 model Service {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  phone     String
-  name      String
-  owner     String
-  category  String
-  image     String?
-  provider  String? // "credentials" lub "google"
-  town      String
-  zipcode   String
-  district  String
-  street    String
-  description String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  phone       String
+  name        String
+  owner       String
+  category    String
+  image       String?
+  provider    String? // "credentials" lub "google"
+  town        String
+  zipcode     String
+  district    String
+  street      String
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   workingDays WorkingDay[]
+  services    SingleService[]
+  categories  Categories[]
 }
 
 model WorkingDay {
@@ -57,12 +59,37 @@ model WorkingDay {
   service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
-
 model Review {
-  id  String @id @default(uuid())
+  id        String   @id @default(uuid())
   serviceID String
-  clientId String
-  content String
-  rate Int
+  clientId  String
+  content   String
+  rate      Int
   createdAt DateTime @default(now())
+}
+
+model SingleService {
+  id        String  @id @default(uuid())
+  name      String
+  description String
+  category  String
+  price     String
+  durationType String
+  from  String
+  to  String
+  duration String
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+
+model Categories {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }

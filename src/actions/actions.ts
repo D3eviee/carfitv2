@@ -1,6 +1,6 @@
 'use server'
 import prisma from "@/lib/db";
-import { createServiceSession, createSession } from "@/lib/session";
+import { createServiceSession, createSession, serviceAuth } from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -139,3 +139,75 @@ export const getRecommendedServices = async () => {
         return;
     }
 } 
+
+
+export type AddNewServiceProps = {
+    serviceId: string,
+    name: string,
+    description: string,
+    price: string,
+    durationType: string,
+    duration: string,
+    category: string,
+    from: string,
+    to: string,
+}
+
+export const addNewService = async (serviceData:serviceModalProps) => {
+    try {
+
+        const serviceId = await serviceAuth()
+        const newServiceData = await prisma.singleService.create({
+            data: {
+                serviceId: serviceId.id,
+                name: serviceData.name,
+                category: serviceData.category,
+                price: serviceData.price,
+                description: serviceData.description,
+                durationType: serviceData.durationType,
+                duration: serviceData.duration,
+                from: serviceData.from,
+                to: serviceData.to,
+            }
+        })
+        return {newServiceData}
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const addNewCategory = async (categoryData:serviceCategoryProps) => {
+    try {
+        const serviceId = await serviceAuth()
+
+        const newServiceData = await prisma.categories.create({
+            data: {
+                serviceId: serviceId.id,
+                name: categoryData.name,
+            }
+        })
+        return {newServiceData}
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getCategories = async () => {
+    try {
+        const serviceId = await serviceAuth()
+
+        const categories = await prisma.categories.findMany({
+            where: {
+                serviceId: serviceId.id
+            },
+            select: {
+                name: true
+            }
+        })
+
+        return categories
+
+    } catch (error) {
+        console.log("There was a problem with getting categories", error)
+    }
+}
