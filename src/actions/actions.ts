@@ -29,7 +29,7 @@ export const checkIfEmailExists = async (email: string) => {
 }
 
 export const createService = async (data: OnboardingState, workingDays: WorkingDay[]) => {
-    const {email, password, businessName, businessCategory, businessPhone, businessOwner, businessTown, businessZipcode, businessDistrict, businessStreet} = data!
+    const { email, password, businessName, businessCategory, businessPhone, businessOwner, businessTown, businessZipcode, businessDistrict, businessStreet } = data!
 
     try {
         //create new service and add to database
@@ -67,33 +67,32 @@ export const createService = async (data: OnboardingState, workingDays: WorkingD
         //create sesssion
         const session = await createServiceSession(service)
         if (session.success) {
-            return { success: true , status: 200 };
+            return { success: true, status: 200 };
         }
 
-        return {status: "success", message:"Creted user but no session"}
+        return { status: "success", message: "Creted user but no session" }
     } catch {
-        return {status: "failed", message:"Creating user failed"}
+        return { status: "failed", message: "Creating user failed" }
     }
-    
 }
 
-export const getServiceData = async(id: string) => {
-    try{
+export const getServiceData = async (id: string) => {
+    try {
         const serviceData = await prisma.service.findFirst({
             where: {
                 id: id
             }
-        }) 
+        })
 
         return serviceData
     }
-    catch(error){
+    catch (error) {
         console.log("Error while trying to retreieve service data:", error)
     }
 }
 
-export const getWorkingTimeData = async(id: string) => {
-    try{
+export const getWorkingTimeData = async (id: string) => {
+    try {
         const serviceData = await prisma.workingDay.findMany({
             where: {
                 serviceId: id
@@ -106,13 +105,13 @@ export const getWorkingTimeData = async(id: string) => {
 
         return serviceData
     }
-    catch(error){
+    catch (error) {
         console.log("Error while trying to retreieve working time data:", error)
     }
 }
 
-export const getServiceReviews = async(id: string) => {
-    try{
+export const getServiceReviews = async (id: string) => {
+    try {
         const serviceReviews = await prisma.review.findMany({
             where: {
                 serviceID: id
@@ -124,7 +123,7 @@ export const getServiceReviews = async(id: string) => {
 
         return serviceReviews
     }
-    catch(error){
+    catch (error) {
         console.log("Error while trying to retreieve reviews", error)
     }
 }
@@ -138,7 +137,7 @@ export const getRecommendedServices = async () => {
         console.error("Error fetching recommended services:", error);
         return;
     }
-} 
+}
 
 
 export type AddNewServiceProps = {
@@ -153,50 +152,53 @@ export type AddNewServiceProps = {
     to: string,
 }
 
-export const addNewService = async (serviceData:serviceModalProps) => {
+export const addNewService = async (serviceData: serviceModalProps) => {
     try {
-
         const serviceId = await serviceAuth()
-        const newServiceData = await prisma.singleService.create({
+
+        const newService = await prisma.singleService.create({
             data: {
                 serviceId: serviceId.id,
                 name: serviceData.name,
-                category: serviceData.category,
+                categoryId: serviceData.category,
                 price: serviceData.price,
                 description: serviceData.description,
                 durationType: serviceData.durationType,
                 duration: serviceData.duration,
                 from: serviceData.from,
-                to: serviceData.to,
+                to: serviceData.to
+            },
+        });
+
+
+        const data = await prisma.categories.findMany({
+            where: {
+                serviceId: serviceId.id
+            },
+            select:{
+                name: true,
+                services:true,
             }
         })
-        return {newServiceData}
+
+        return data
     } catch (error) {
         console.log(error)
     }
 }
 
-export const addNewCategory = async (categoryData:serviceCategoryProps) => {
+export const addNewCategory = async ({ name }: { name: string }) => {
     try {
         const serviceId = await serviceAuth()
 
-        const newServiceData = await prisma.categories.create({
+        await prisma.categories.create({
             data: {
                 serviceId: serviceId.id,
-                name: categoryData.name,
+                name: name,
             }
         })
-        return {newServiceData}
-    } catch (error) {
-        console.log(error)
-    }
-}
 
-export const getCategories = async () => {
-    try {
-        const serviceId = await serviceAuth()
-
-        const categories = await prisma.categories.findMany({
+        const serviceCategories = await prisma.categories.findMany({
             where: {
                 serviceId: serviceId.id
             },
@@ -205,8 +207,42 @@ export const getCategories = async () => {
             }
         })
 
-        return categories
+        return serviceCategories
+    } catch (error) {
+        console.log(error)
+    }
+}
 
+export const getServicesData = async () => {
+    try {
+        const serviceId = await serviceAuth()
+
+        const servicesData = await prisma.categories.findMany({
+            where: {
+                serviceId: serviceId.id
+            },
+            select: {
+                id: true,
+                name: true,
+                services: {
+                    select: {
+                        id: true,
+                        name: true,
+                        durationType: true,
+                        from: true,
+                        to: true,
+                        duration: true,
+                        price: true,
+                        description: true
+                    }
+                },
+            },
+            orderBy: {
+                createdAt: "asc"
+            }
+        })
+
+        return servicesData
     } catch (error) {
         console.log("There was a problem with getting categories", error)
     }

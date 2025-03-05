@@ -1,11 +1,19 @@
+'use client'
 import DashboardContentContainer from "@/components/dashboard/dashboard-content-container";
 import { MoreVertical, Pen, TrashIcon } from "lucide-react";
 import { ReactNode } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { AddCategoryButton } from "@/components/dashboard/services/add-category-button";
 import { AddServiceButton } from "@/components/dashboard/services/add-service-button";
+import {useQuery } from "@tanstack/react-query";
+import { getServicesData } from "@/actions/actions";
 
-export default async function ServicePage() { 
+export default function ServicePage() { 
+
+  const {data} = useQuery({ 
+    queryKey: ['category'], 
+    queryFn: getServicesData,    
+  })
 
   return (
     <DashboardContentContainer>
@@ -19,7 +27,7 @@ export default async function ServicePage() {
         {/*content*/}  
         <div className="flex flex-row gap-[20px]">
           {/*left sidebar menu*/}  
-          <CategoriesSidebar/>
+          <CategoriesSidebar categories={data}/> 
 
           {/*right content*/}  
           <div className="bg-[#FFFFFF] w-[647px] flex flex-col gap-5 px-4 py-10 border-[0.5px] border-[#D4D4D4] rounded-lg ">
@@ -30,27 +38,26 @@ export default async function ServicePage() {
 
             {/*div for service items*/}  
             <div className="mt-5 min-h-40 px-9 flex flex-col items-center justify-center gap-12">
-              {/* <p className="text-sm font-light text-[#555] text-center">No items</p> */}
-              <CategorySection>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-              </CategorySection>
 
-              <CategorySection>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-              </CategorySection>
-
-              <CategorySection>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-                <CategorySectionItem/>
-              </CategorySection>
+              {(data&& data?.length > 0)
+              ? (data.map((category)=>{
+                return (
+                  <CategorySection key={category.id} categoryName={category.name}>
+                    {category.services && category.services.length > 0
+                    ?  
+                    (
+                        category.services.map((service) =>  {
+                          return (<CategorySectionItem key={service.id} service={service}/>)
+                        })
+                    )
+                    : <p className="text-sm font-light text-[#555] text-center">No items</p> 
+                    }
+                  </CategorySection>
+                )
+              })
+              )
+              : <p className="text-sm font-light text-[#555] text-center">No items</p> 
+              }
             </div>
           </div>
         </div>
@@ -59,44 +66,69 @@ export default async function ServicePage() {
   );
 }
 
-function CategoriesSidebar() {
+function CategoriesSidebar({categories}) {
   return (
     <div className="bg-[#FFFFFF] w-[215px] max-h-fit flex flex-col gap-5  px-4 py-5 border-[0.5px] border-[#D4D4D4] rounded-lg ">
             <h3 className="text-base text-[#333] font-semibold  px-2.5">Categories</h3>
             <ul className="flex flex-col gap-2 min-h-7 list-none">
-            <li className="text-sm font-light text-[#555] text-center">No categories</li>
-              {/* {categories ?
+              { (categories && categories?.length > 0) ?
                 categories.map((category, index)=>{
                   return <li key={index} className="leading-3 text-sm text-[#111] font-base  px-2.5 py-2.5 rounded-[5px] border-[0.5px] border-[#D4D4D4]">{category.name}</li>
                 })
               : <li className="text-sm font-light text-[#555] text-center">No categories</li>
-              } */}
-          
-              
-              {/* <p className="bg-[#F9FAFC] leading-3 text-sm text-[#111] font-base  px-2.5 py-2.5 rounded-[5px] border-[0.5px] border-[#D4D4D4]">Wheels</p> */}
-            
+              }
             </ul> 
             <AddCategoryButton/>
       </div>
   )
 }
 
-function CategorySection({children}:{children: ReactNode}) {
+function CategorySection({children, categoryName}:{children: ReactNode, categoryName: string}) {
   return (
+
     <div className="w-full flex flex-col gap-4 ">
       <div className="flex flex-col gap-0.5 border-b border-b-[#DCDCDC] pb-3">
-        <h4 className="text-[#111] text-base font-medium">Category name</h4>
+        <h4 className="text-[#111] text-base font-medium">{categoryName}</h4>
         <p className="text-[#333] text-xs font-light">Some small description for category.</p>
       </div>
       <div className="flex flex-col gap-2.5">
         {children}
       </div>
-      
     </div>
   )
 }
 
-function CategorySectionItem() {
+type Service = {
+    name: string,
+    id: string,
+    description: string,
+    price: string,
+    durationType: string,
+    from: string,
+    to: string,
+    duration: string,
+}
+
+function CategorySectionItem({ service }: { service: Service }){
+
+  const timeFrame = (timeType: string) => {
+    let time: string
+    switch (timeType) {
+    case "precise":
+       time = service.duration
+      break;
+      case "range":
+        time = `${service.from} - ${service.to}`
+        break;
+      default:
+        time = "Czas trawani wizyty może być zmienny"
+        break;
+    }
+    return time
+  }
+  
+
+
   return (
     <div className="w-full flex flex-row bg-[#F9FAFC] border-[0.5px] border-[#D4D4D4] rounded-[10px] overflow-hidden py-3">
       <div className="w-[6px] bg-purple-600 h-full opacity-45"/>
@@ -104,12 +136,15 @@ function CategorySectionItem() {
       <div className="w-full px-3 py-2 pr-2 flex flex-row justify-between">
         {/* right headings */}
         <div className="flex flex-col gap-2">
-          <h1 className="text-[#111] text-base font-medium">Diagnoza i wycena naprawy</h1>
-          <h2 className="text-[#333] text-sm font-normal">Moving</h2>
+          <h1 className="text-[#111] text-base font-medium">{service.name}</h1>
+          <h2 className="text-[#333] text-sm font-normal">{timeFrame(service.durationType)}</h2>
+          
+
+
         </div>
         {/* left details */}
         <div className="flex flex-row gap-3">
-          <p className="h-full flex flex-col justify-end text-[#111] text-sm font-normal">100 PLN</p>
+          <p className="h-full flex flex-col justify-end text-[#111] text-sm font-normal">{service.price} PLN</p>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <MoreVertical size={20} color="#111" className="hover:cursor-pointer"/>

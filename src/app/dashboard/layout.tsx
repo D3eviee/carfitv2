@@ -5,10 +5,10 @@ import { ReactNode } from "react";
 export default function Layout({children}: {children: ReactNode}) {
 
   return (
-      <>
-        <DashboardNavbar/>
-        <SidebarNavigation/>
-        {children}
-      </>
+        <>
+          <DashboardNavbar/>
+          <SidebarNavigation/>
+          {children}
+        </>
   );
 }

@@ -1,4 +1,3 @@
-import { getCategories } from "@/actions/actions";
 import { useQuery } from "@tanstack/react-query";
 import { ReactNode } from "react";
 

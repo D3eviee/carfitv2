@@ -1,10 +1,12 @@
+
 import { X } from "lucide-react"
 import { FormInput } from "../form-input"
 import { useForm } from "react-hook-form"
 import { FormLabel } from "../form-label"
 import { FormButton } from "../form-button"
-import {addNewService } from "@/actions/actions"
+import { addNewService, getServicesData } from "@/actions/actions"
 import {useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 type Props = { 
     onClick?: (f:void) => void;
@@ -12,9 +14,17 @@ type Props = {
 };
 
 export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
+
+    const queryClient = useQueryClient()
+
+    const {data} = useQuery({
+        queryKey: ['formCategories'],
+        queryFn: getServicesData
+    })
+
     const [choosenDurationType, setChoosenDurationType] = useState<string>("precise")
 
-    const { register, handleSubmit} = useForm<serviceModalProps>({
+    const { register, handleSubmit, getValues} = useForm<serviceModalProps>({
         defaultValues: {
             name: "",
             category: "",
@@ -27,15 +37,20 @@ export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
         }
     })  
 
-    const handleAddingNewService = async (data:serviceModalProps) => {
-        try{
-            const result =  await addNewService(data)
-            onClick()
-            return result
-        } catch (error) {
-            console.log("Error while trying to add new service:", error)
-        }
-    }
+
+    const mutation = useMutation({
+        mutationFn: async () => addNewService(getValues()),
+        onSuccess: (data) => {
+            console.log(data)
+          if (data) {
+            queryClient.setQueryData(['category'], data);
+          }
+          onClick();
+        },
+        onError: (error) => {
+          console.error("Error adding category", error);
+        },
+      });
 
     return (
         <div>
@@ -47,7 +62,7 @@ export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
                 </div>
 
                 <div className="p-8">
-                    <form className="flex flex-col gap-5" onSubmit={handleSubmit(handleAddingNewService)}>
+                    <form className="flex flex-col gap-5" onSubmit={handleSubmit(() => mutation.mutate())}>
                         <div>
                             <FormLabel text="Service name"/>
                             <FormInput type="text" id="name" register={register}/>
@@ -56,11 +71,11 @@ export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
                         <div className="flex flex-row gap-5">
                             <div>
                                 <FormLabel text="Service category" />
-                                <select className="border-[0.5px] border-[#E8E8E8] w-52 p-2" id="category" {...register('category')}>
-                                    <option value="Wheels">Wheels</option>
-                                    <option value="Windows">Windows</option>
-                                    <option value="Engine">Engine</option>
-                                    <option value="Maintance">Maintance</option>
+                                <select className="border-[0.5px] border-[#E8E8E8] w-52 p-2" id="category" {...register('category')} defaultValue={""} required>
+                                <option value="" disabled hidden>Wybierz kategorię</option>
+                                    {data?.map((category, index)=>{
+                                        return (<option key={index} value={category.id}>{category.name}</option>)
+                                    })}
                                 </select>
                             </div>
                             <div>
@@ -91,7 +106,7 @@ export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
                                 <div className="flex flex-col gap-1">
                                     <FormLabel text="From" />
                                     <select className="border-[0.5px] border-[#E8E8E8] w-32 p-2" id="from" {...register('from')}>
-                                        <option>Category 1</option>
+                                    <option>Category 1</option>
                                         <option>Category 2</option>
                                         <option>Category 3</option>
                                         <option>Category 4</option>

@@ -4,25 +4,31 @@ import { FormInput } from "../form-input";
 import { FormButton } from "../form-button"
 import { addNewCategory } from "@/actions/actions";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 type Props = { onClick?: (f:void) => void;};
 export const DashboardAddCategoryModal = ({ onClick = () => {} }: Props) => {
-    
-    const { register, handleSubmit} = useForm({
+
+    const queryClient = useQueryClient()
+
+    const {register, handleSubmit, getValues} = useForm({
         defaultValues: {
             name: ""
         }
     })
 
-    const handleAddingCategory = async (data:{name:string}) => {
-        try{
-            const result = await addNewCategory(data)
-            onClick()
-            return result
-        }catch(error){
-            console.log("Error adding category", error)
-        }
-    }
+    const mutation = useMutation({
+        mutationFn: async () => addNewCategory({ name: getValues("name") }),
+        onSuccess: (data) => {
+          if (data) {
+            queryClient.setQueryData(['category'], data);
+          }
+          onClick();
+        },
+        onError: (error) => {
+          console.error("Error adding category", error);
+        },
+      });
 
     return (
         <div>
@@ -34,7 +40,7 @@ export const DashboardAddCategoryModal = ({ onClick = () => {} }: Props) => {
                 </div>
 
                 <div className="p-8 flex flex-col gap-4">
-                        <form onSubmit={handleSubmit(handleAddingCategory)}>
+                        <form onSubmit={handleSubmit(() => mutation.mutate())}>
                             <FormLabel text="Category Name"/>
                             <FormInput id="name" type="text" register={register} required={true}/>
 
