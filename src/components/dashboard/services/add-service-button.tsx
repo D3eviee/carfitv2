@@ -5,7 +5,6 @@ import { DashboardAddServiceModal } from "../dashboard-add-service-modal"
 
 export function AddServiceButton(){
     const [isCreatingService, setIsCreatingService] =  useState<Boolean>(false)
-  
     return(
       <>
         {isCreatingService && createPortal(<DashboardAddServiceModal onClick={()=>{setIsCreatingService(false)}} />, document.body)}

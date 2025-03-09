@@ -13,7 +13,7 @@ type Props = {
     //serviceId: string;
 };
 
-export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
+export const DashboardAddServiceModal = ({ onClick = () => {} }: Props,) => {
 
     const queryClient = useQueryClient()
 
@@ -55,7 +55,7 @@ export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
     return (
         <div>
             <div className="absolute top-0 bg-black opacity-40 w-full h-full z-20"/>
-            <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-1/3 h-2/3 bg-slate-50 z-20 rounded-lg">
+            <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-1/3  bg-slate-50 z-20 rounded-lg">
                 <div className="p-4 flex items-center justify-center border-b border-slate-300">
                     <h1 className="font-medium text-sm">Add new service</h1>
                     <X className="ml-auto cursor-pointer" onClick={()=>{onClick()}} size={20}/>
@@ -106,19 +106,51 @@ export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
                                 <div className="flex flex-col gap-1">
                                     <FormLabel text="From" />
                                     <select className="border-[0.5px] border-[#E8E8E8] w-32 p-2" id="from" {...register('from')}>
-                                    <option>Category 1</option>
-                                        <option>Category 2</option>
-                                        <option>Category 3</option>
-                                        <option>Category 4</option>
+                                        <option value="" disabled hidden>Choose</option>
+                                        <option value={15}>15min</option>
+                                        <option value={30}>30min</option>
+                                        <option value={45}>45min</option>
+                                        <option value={60}>1h</option>
+                                        <option value={75}>1h 15min</option>
+                                        <option value={90}>1h 30min</option>
+                                        <option value={105}>1h 45min</option>
+                                        <option value={120}>2h</option>
+                                        <option value={135}>2h 15min</option>
+                                        <option value={150}>2h 30min</option>
+                                        <option value={165}>2h 45min</option>
+                                        <option value={180}>3h</option>
+                                        <option value={195}>3h 15min</option>
+                                        <option value={210}>3h 30min</option>
+                                        <option value={225}>3h 45min</option>
+                                        <option value={240}>4h</option>
+                                        <option value={255}>4h 15min</option>
+                                        <option value={270}>4h 30min</option>
+                                        <option value={285}>4h 45min</option>
                                     </select>
                                 </div>
                                 <div className="flex flex-col gap-1">
                                     <FormLabel text="To" />
                                     <select className="border-[0.5px] border-[#E8E8E8] w-32 p-2" id="to" {...register('to')}>
-                                        <option>Category 1</option>
-                                        <option>Category 2</option>
-                                        <option>Category 3</option>
-                                        <option>Category 4</option>
+                                        <option value="" disabled hidden>Choose</option>
+                                        <option value={30}>30min</option>
+                                        <option value={45}>45min</option>
+                                        <option value={60}>1h</option>
+                                        <option value={75}>1h 15min</option>
+                                        <option value={90}>1h 30min</option>
+                                        <option value={105}>1h 45min</option>
+                                        <option value={120}>2h</option>
+                                        <option value={135}>2h 15min</option>
+                                        <option value={150}>2h 30min</option>
+                                        <option value={165}>2h 45min</option>
+                                        <option value={180}>3h</option>
+                                        <option value={195}>3h 15min</option>
+                                        <option value={210}>3h 30min</option>
+                                        <option value={225}>3h 45min</option>
+                                        <option value={240}>4h</option>
+                                        <option value={255}>4h 15min</option>
+                                        <option value={270}>4h 30min</option>
+                                        <option value={285}>4h 45min</option>
+                                        <option value={300}>5h</option>
                                     </select>
                                 </div>
                                 </>
@@ -128,10 +160,27 @@ export const DashboardAddServiceModal = ({ onClick = () => {} }: Props) => {
                                 <div className="flex flex-col gap-1">
                                     <FormLabel text="Duration" />
                                     <select className="border-[0.5px] border-[#E8E8E8] w-32 p-2" id="duration" {...register('duration')}>
-                                        <option>Category 1</option>
-                                        <option>Category 2</option>
-                                        <option>Category 3</option>
-                                        <option>Category 4</option>
+                                        <option value="" disabled hidden>Pick time</option>
+                                        <option value={15}>15min</option>
+                                        <option value={30}>30min</option>
+                                        <option value={45}>45min</option>
+                                        <option value={60}>1h</option>
+                                        <option value={75}>1h 15min</option>
+                                        <option value={90}>1h 30min</option>
+                                        <option value={105}>1h 45min</option>
+                                        <option value={120}>2h</option>
+                                        <option value={75}>2h 15min</option>
+                                        <option value={90}>2h 30min</option>
+                                        <option value={105}>2h 45min</option>
+                                        <option value={120}>3h</option>
+                                        <option value={75}>3h 15min</option>
+                                        <option value={90}>3h 30min</option>
+                                        <option value={105}>3h 45min</option>
+                                        <option value={120}>4h</option>
+                                        <option value={75}>4h 15min</option>
+                                        <option value={90}>4h 30min</option>
+                                        <option value={105}>4h 45min</option>
+                                        <option value={120}>5h</option>
                                     </select>
                                 </div>
                             )} 

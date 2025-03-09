@@ -1,7 +1,9 @@
 'use server'
 import prisma from "@/lib/db";
+import { categoryName } from "@/lib/schema";
 import { createServiceSession, createSession, serviceAuth } from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
+import { error } from "console";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -81,6 +83,15 @@ export const getServiceData = async (id: string) => {
         const serviceData = await prisma.service.findFirst({
             where: {
                 id: id
+            },
+            include :{
+                categories: {
+                    select: {
+                        id: true,
+                        name: true,
+                        services: true
+                    }
+                }
             }
         })
 
@@ -189,29 +200,58 @@ export const addNewService = async (serviceData: serviceModalProps) => {
 
 export const addNewCategory = async ({ name }: { name: string }) => {
     try {
-        const serviceId = await serviceAuth()
+        const validation = categoryName.safeParse(name);
+        if (!validation.success) {
+            throw new Error("Category name needs to be plain text");
+        }
+
+        const serviceId = await serviceAuth();
+        const isExisting = await prisma.categories.findFirst({
+            where: { serviceId: serviceId.id, name }
+        });
+
+        if (isExisting) {
+            throw new Error("Category already exists");
+        }
 
         await prisma.categories.create({
-            data: {
-                serviceId: serviceId.id,
-                name: name,
-            }
-        })
+            data: { serviceId: serviceId.id, name }
+        });
 
-        const serviceCategories = await prisma.categories.findMany({
-            where: {
-                serviceId: serviceId.id
-            },
-            select: {
-                name: true
-            }
-        })
-
-        return serviceCategories
-    } catch (error) {
-        console.log(error)
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, message: error.message };
     }
-}
+};
+
+export const deleteCategory = async (id:string) => {
+    try {
+        await prisma.categories.delete({
+            where: {
+                id: id
+            }
+        })
+
+        return {success:true}
+    } catch (error: any) {
+        return { success: false, message: error.message };
+    }
+};
+
+export const deleteService = async (id:string) => {
+    try {
+        await prisma.singleService.delete({
+            where: {
+                id: id
+            }
+        })
+
+        return {success:true}
+    } catch (error: any) {
+        return { success: false, message: error.message };
+    }
+};
+
 
 export const getServicesData = async () => {
     try {
@@ -246,4 +286,18 @@ export const getServicesData = async () => {
     } catch (error) {
         console.log("There was a problem with getting categories", error)
     }
+}
+
+export const getCategoriesDataForService = async (id:string) => {
+    const categoriesData = await prisma.categories.findMany({
+        where: {
+            serviceId: id
+        },
+        select: {
+            id: true,
+            name: true,
+            services: true
+        }
+    })
+    return categoriesData
 }

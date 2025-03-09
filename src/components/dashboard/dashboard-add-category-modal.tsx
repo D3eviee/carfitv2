@@ -5,9 +5,11 @@ import { FormButton } from "../form-button"
 import { addNewCategory } from "@/actions/actions";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react";
 
 type Props = { onClick?: (f:void) => void;};
 export const DashboardAddCategoryModal = ({ onClick = () => {} }: Props) => {
+    const [err, setErr] = useState<string>()
 
     const queryClient = useQueryClient()
 
@@ -17,18 +19,17 @@ export const DashboardAddCategoryModal = ({ onClick = () => {} }: Props) => {
         }
     })
 
-    const mutation = useMutation({
-        mutationFn: async () => addNewCategory({ name: getValues("name") }),
+    const { mutate } = useMutation({
+        mutationFn: async () => await addNewCategory({ name: getValues("name") }),
         onSuccess: (data) => {
-          if (data) {
-            queryClient.setQueryData(['category'], data);
-          }
-          onClick();
+            if (data?.success) {
+                queryClient.invalidateQueries({ queryKey: ["category"] });
+                onClick();
+            } else {
+                setErr(data?.message || "Error occurred")
+            }
         },
-        onError: (error) => {
-          console.error("Error adding category", error);
-        },
-      });
+    });
 
     return (
         <div>
@@ -40,17 +41,19 @@ export const DashboardAddCategoryModal = ({ onClick = () => {} }: Props) => {
                 </div>
 
                 <div className="p-8 flex flex-col gap-4">
-                        <form onSubmit={handleSubmit(() => mutation.mutate())}>
+                        <form onSubmit={handleSubmit(() => mutate())}>
                             <FormLabel text="Category Name"/>
                             <FormInput id="name" type="text" register={register} required={true}/>
 
                             {/* CONTOL BUTTONS */}
-                            <div className="flex flex-row justify-end w-full" >
+                            <div className="flex flex-col justify-end w-full" >
+                                <p className="text-red-600 text-sm font-normal">{err}</p>   
                                 <div className=" w-full flex flex-row gap-3">
                                     <FormButton label="Cancel" type="button" onClick={()=>{onClick()}}/>
                                     <FormButton label="Add" type="submit"/>
                                 </div>
                             </div>
+                           
                         </form>  
                 </div>
             </div>

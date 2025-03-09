@@ -87,7 +87,7 @@ model SingleService {
 
 model Categories {
   id        String      @id @default(uuid())
-  name      String
+  name      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 

@@ -31,3 +31,5 @@ export const businessOnboardingSchema = z.object({
 })
 
 export type BusinessOnboardingSchema = z.infer<typeof businessOnboardingSchema>
+
+export const categoryName = z.string().min(1)

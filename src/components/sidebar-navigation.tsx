@@ -11,12 +11,16 @@ export const SidebarNavigation = async () => {
           <Home size={25} color="#FFFFFF"/>
         </div>
       </Link>
-      <div className="w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] active:bg-[#F25287]">
-        <Calendar size={24} color="#FFFFFF"/>
-      </div>
-      <div className="w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] active:bg-[#F25287]">
-        <Book size={23} color="#FFFFFF"/>
-      </div>
+      <Link href="/dashboard/calendar">
+        <div className="w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] active:bg-[#F25287]">
+          <Calendar size={24} color="#FFFFFF"/>
+        </div>
+      </Link>
+      <Link href="/dashboard/appointments">
+        <div className="w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] active:bg-[#F25287]">
+          <Book size={23} color="#FFFFFF"/>
+        </div>
+      </Link>
       <Link href="/dashboard/services">
         <div className="w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] active:bg-[#F25287]">
           <Wrench size={23} color="#FFFFFF"/>
