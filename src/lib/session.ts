@@ -38,12 +38,12 @@ export const createServiceSession = async (service: object) => {
         throw new Error('JWT_SECRET is not defined in environment variables.');
     }
 
-    const token = jwt.sign(service, process.env.JWT_SECRET, { expiresIn: '1h'});
+    const token = jwt.sign(service, process.env.JWT_SECRET, { expiresIn: '24h'});
 
     const cookieStore = await cookies()
     cookieStore.set('ServiceToken', token, {
         httpOnly: true,
-        maxAge: 60 * 60,
+        maxAge: 60 * 60 * 24,
         path: '/',
     })
 

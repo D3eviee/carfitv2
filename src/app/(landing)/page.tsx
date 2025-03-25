@@ -9,7 +9,7 @@ import { getRecommendedServices } from "@/actions/actions";
 const createLinkFormat = (id:string, companyName:string) : string  => {
   const companyNameToLowerCase= companyName.toLowerCase()
   const companyLink = companyNameToLowerCase.replaceAll(" ", "-")
-  return `/service/${companyLink}/${id}`
+  return `/service/${companyLink}-${id}`
 }
 
 export default async function  Home() {

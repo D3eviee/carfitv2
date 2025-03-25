@@ -1,4 +1,4 @@
-import { serviceAuth, userAuth } from "@/lib/session";
+import { userAuth } from "@/lib/session";
 import Link from "next/link";
 import NavbarProfileMenu from "./navigation-profile-menu";
 

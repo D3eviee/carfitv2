@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { BusinessOnboardingSchema } from "./schema";
+import { boolean } from "zod";
 
 export type OnboardingState = Partial<BusinessOnboardingSchema> & {
     setData: (data: Partial<BusinessOnboardingSchema>) => void;
@@ -16,6 +17,26 @@ export const useContainerErrorStore = create<ContainerError>()((set) => ({
   setContainerError: (error) => set(() => ({ errorMessage: error}))
   
 }))
+
+type ModalStoreProps = {
+  isAddCategoryModalOpen: boolean;
+  isAddServiceModalOpen: boolean;
+  toggleCategoryModal: () => void;
+  toggleServiceModal: () => void;
+  closeModals: () => void;
+};
+
+export const useModalStore = create<ModalStoreProps>((set) => ({
+  isAddCategoryModalOpen: false,
+  isAddServiceModalOpen: false,
+  toggleCategoryModal: () => set((state) => ({ isAddCategoryModalOpen: !state.isAddCategoryModalOpen })),
+  toggleServiceModal: () => set((state) => ({ isAddServiceModalOpen: !state.isAddServiceModalOpen })),
+  closeModals: () => set((state) => ({ 
+    isAddServiceModalOpen: false,
+    isAddCategoryModalOpen: false
+  })),
+}));
+
 
 export const useOnboardingStore = create<OnboardingState>()((set) => ({
     setData: (data) => set(data),

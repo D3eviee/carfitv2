@@ -11,9 +11,9 @@ type serviceModalProps = {
   price: string,
   description: string,
   durationType: string,
-  duration: string,
-  from: string,
-  to: string
+  duration: number,
+  from: number,
+  to: number
 }
 
 type serviceCategoryProps = {

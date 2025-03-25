@@ -7,18 +7,19 @@ import FormHeader from "@/components/form-header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { signInService } from "@/actions/actions";
 
 export default function SignIn() {
 
-  const [error, setError] = useState<string>('')
-    const router = useRouter();
+  const [error, setError] = useState<string | undefined>("");
+  const router = useRouter();
   
-    interface FormData  {
-      email: string
-      password: string
-    }
+  interface FormData  {
+    email: string
+    password: string
+  }
   
-    const {register, handleSubmit} = useForm<FormData>({
+    const {register, handleSubmit, formState} = useForm<FormData>({
       defaultValues: {
         email: '',
         password: ''
@@ -26,27 +27,17 @@ export default function SignIn() {
     });
   
     const onSubmit = async (data: FormData) => {
+      const response = await signInService(data);
       try {
-        const response = await fetch("/api/sign-in", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-  
-        const responseData = await response.json();
-  
-        if (response.ok) {
-          router.push('/')
-        }else{
-          setError(responseData.error)
+        if (response.success) {
+          router.push('/dashboard');
+        } else {
+          setError(response.error);
         }
-      } catch (error) {
-        setError("There was a problem with your login");
+      }catch {
+        setError(response.error)
       }
     };
-
 
   return (
     <div className="w-full h-screen flex">
@@ -69,6 +60,7 @@ export default function SignIn() {
               id="email"
               placeholder="carfit@gmail.com"
               className="border-[0.5px] border-[#CCCCCC] w-full px-[7px] py-[5px] text-[#111] text-sm rounded-md mb-[15px] focus:outline-[#333333]"
+              onFocus={()=>{setError("")}}
             />
 
             <label htmlFor="password" className="inline-block text-[#333] text-[14px] mb-[5px]">Password</label>
@@ -78,12 +70,13 @@ export default function SignIn() {
               id="password"
               placeholder="***********"
               className="border-[0.5px] border-[#CCCCCC] w-full px-[7px] py-[5px] text-[#111] text-sm rounded-md focus:outline-[#333333]"
+              onFocus={()=>{setError("")}}
             />
 
           <button className="w-full flex bg-[#111111] py-2 justify-center items-center gap-3 rounded-[7px] font-medium text-sm mt-[25px]">Log in</button>  
           </form>
         
-        <p className="text-red-500 text-xs">{error}</p>
+        <p className="block text-red-500 text-xs">{error}</p>
         
           <div>
             <p className="text-xs text-[#333] text-pretty font-extralight tracking-wide">By clicking "Log in" you acknowledge you have read, understood and agree for our 

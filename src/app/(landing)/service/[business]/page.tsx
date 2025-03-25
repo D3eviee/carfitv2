@@ -7,12 +7,9 @@ import { getServiceData, getServiceReviews, getWorkingTimeData } from "@/actions
 import { ServicePageSumarry } from "@/components/service-page-summary";
 import ServicePageList from '@/components/service-page-list';
 
-const dummmyCompany = {
-    description: "Nasz warsztat istnieje od 2000 roku. Powstał z pasji do obsługi samochodów wyścigowych i startów w wyścigach. Przez ponad 20 lat zdobyliśmy duże doświadczenie, które staramy się przekładać na jakość obsługi. Do każdego zlecenia podchodzimy indywidualnie. Naprawy wykonujemy fachowo i możliwie szybko. W warsztacie są 4 stanowiska z podnośnikami. Dla klientów przygotowaliśmy poczekalnię. Dysponujemy również lawetą."
-}
-
 export default async function BusinessPage({ params }: { params: {business: string }}) {
-  const id = (await params).business[1];
+  const param = (await params).business;
+  const id = param.slice(-36)
   
   const dniKolejnosc = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" , "Sunday"];
 
@@ -26,10 +23,7 @@ export default async function BusinessPage({ params }: { params: {business: stri
   workingTimeData!.sort(
     (a, b) => dniKolejnosc.indexOf(a.dayOfWeek) - dniKolejnosc.indexOf(b.dayOfWeek)
   );
-
-
-
-
+  
   return (
     <div className="mt-[52px] box-border mx-[236px]">
       {/*PAGE TITLE SECION*/}
@@ -51,7 +45,7 @@ export default async function BusinessPage({ params }: { params: {business: stri
             {/*INFO*/}
             <div className="flex flex-col gap-2">
               <h1 className="text-[30px] text-[#000000] font-medium">Informacje</h1>
-              <p className="text-[#333333] text-[15px] text-pretty font-normal leading-5">{dummmyCompany.description} </p>
+              <p className="text-[#333333] text-[15px] text-pretty font-normal leading-5">{serviceData?.description || "No description"} </p>
             </div>
 
             {/*LOCATION*/}

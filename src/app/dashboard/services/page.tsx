@@ -7,6 +7,7 @@ import { AddCategoryButton } from "@/components/dashboard/services/add-category-
 import { AddServiceButton } from "@/components/dashboard/services/add-service-button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteCategory, deleteService, getServicesData } from "@/actions/actions";
+import { displayVisitTime } from "@/utils";
 
 export default function ServicePage() {
   const { data, error } = useQuery({
@@ -36,11 +37,11 @@ export default function ServicePage() {
           <div className="bg-[#FFFFFF] w-[647px] flex flex-col gap-5 px-4 py-10 border-[0.5px] border-[#D4D4D4] rounded-lg ">
             {/*div for aligning button to right*/}
             <div className="w-full flex flex-row justify-end">
-              <AddServiceButton />
+              <AddServiceButton/>
             </div>
 
             {/*div for service items*/}
-            <div className="mt-5 min-h-40 px-9 flex flex-col items-center justify-center gap-12">
+            <div className="mt-5 min-h-40 px-9 flex flex-col items-center justify-center gap-12" >
               {data && data?.length > 0 ? (
                 data.map((category) => {
                   return (
@@ -87,7 +88,6 @@ function CategoriesSidebar({ categories }) {
               if (data?.success) {
                   queryClient.invalidateQueries({ queryKey: ["category"] });
               }
-              console.log(data)
           },
       });
 
@@ -177,28 +177,12 @@ type Service = {
   description: string;
   price: string;
   durationType: string;
-  from: string;
-  to: string;
-  duration: string;
+  from: number;
+  to: number;
+  duration: number;
 };
 
 function CategorySectionItem({ service }: { service: Service }) {
-  const timeFrame = (timeType: string) => {
-    let time: string;
-    switch (timeType) {
-      case "precise":
-        time = service.duration;
-        break;
-      case "range":
-        time = `${service.from} - ${service.to}`;
-        break;
-      default:
-        time = "Czas trawani wizyty może być zmienny";
-        break;
-    }
-    return time;
-  };
-
   const queryClient = useQueryClient()
 
    const { mutate } = useMutation({
@@ -207,7 +191,6 @@ function CategorySectionItem({ service }: { service: Service }) {
               if (data?.success) {
                   queryClient.invalidateQueries({ queryKey: ["category"] });
               }
-              console.log(data)
           },
       });
 
@@ -219,9 +202,7 @@ function CategorySectionItem({ service }: { service: Service }) {
         {/* right headings */}
         <div className="flex flex-col gap-2">
           <h1 className="text-[#111] text-base font-medium">{service.name}</h1>
-          <h2 className="text-[#333] text-sm font-normal">
-            {timeFrame(service.durationType)}
-          </h2>
+          <h2 className="text-[#333] text-sm font-normal">{displayVisitTime(service.from, service.to, service.durationType , service.duration)}</h2>
         </div>
         {/* left details */}
         <div className="flex flex-row gap-3">

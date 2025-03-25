@@ -3,9 +3,9 @@ import prisma from "@/lib/db";
 import { categoryName } from "@/lib/schema";
 import { createServiceSession, createSession, serviceAuth } from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
-import { error } from "console";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import bcrypt from "bcryptjs";
 
 export const logout = async () => {
     const cookieSession = await cookies();
@@ -157,21 +157,22 @@ export type AddNewServiceProps = {
     description: string,
     price: string,
     durationType: string,
-    duration: string,
+    duration: number,
     category: string,
-    from: string,
-    to: string,
+    from: number,
+    to: number,
 }
 
 export const addNewService = async (serviceData: serviceModalProps) => {
     try {
         const serviceId = await serviceAuth()
 
+
         const newService = await prisma.singleService.create({
             data: {
                 serviceId: serviceId.id,
-                name: serviceData.name,
                 categoryId: serviceData.category,
+                name: serviceData.name,
                 price: serviceData.price,
                 description: serviceData.description,
                 durationType: serviceData.durationType,
@@ -180,8 +181,7 @@ export const addNewService = async (serviceData: serviceModalProps) => {
                 to: serviceData.to
             },
         });
-
-
+        
         const data = await prisma.categories.findMany({
             where: {
                 serviceId: serviceId.id
@@ -207,7 +207,7 @@ export const addNewCategory = async ({ name }: { name: string }) => {
 
         const serviceId = await serviceAuth();
         const isExisting = await prisma.categories.findFirst({
-            where: { serviceId: serviceId.id, name }
+            where: { serviceId: serviceId.id, name: name}
         });
 
         if (isExisting) {
@@ -300,4 +300,43 @@ export const getCategoriesDataForService = async (id:string) => {
         }
     })
     return categoriesData
+}
+
+export const signInService = async (data: { email: string; password: string }) => {
+    try{
+        const { email, password } = data;
+  
+        const serviceData = await prisma.service.findUnique({
+          where: { email }
+        });
+      
+        if (!serviceData) {
+          return { success: false, error: "Account with this email doesn't exist" };
+        }
+      
+        const isPasswordValid = await bcrypt.compare(password, serviceData.password);
+      
+        if (!isPasswordValid) {
+          return { success: false, error: "Invalid password" };
+        }
+
+        const session = await createServiceSession(serviceData)
+        if (session.success) {
+            return {success: true, message: "User loged in"}
+        }
+    }catch(error){
+        return {success: false, error: `Unexpected error occured:  ${error}`}
+    }
+
+
+};
+
+
+export const getAllServicesForBusiness = async (id:string) => {
+    const allServices = await prisma.singleService.findMany({
+        where: {
+            serviceId: id
+        },
+    })
+    return allServices
 }
