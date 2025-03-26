@@ -1,4 +1,3 @@
-import BookingServiceList from "../booking-service-list"
 import { BookingCalendar } from "./booking-calendar"
 
 export const BookingChoosingDate = () => {

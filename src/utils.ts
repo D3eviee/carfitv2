@@ -43,4 +43,4 @@ export function displayVisitTime(rangeBeginning:number, rangeEnding:number, dura
     } else {
         return "";
     }
-  }
+}

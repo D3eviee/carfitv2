@@ -113,7 +113,6 @@ export const getWorkingTimeData = async (id: string) => {
             }
         })
 
-
         return serviceData
     }
     catch (error) {
@@ -330,7 +329,6 @@ export const signInService = async (data: { email: string; password: string }) =
 
 
 };
-
 
 export const getAllServicesForBusiness = async (id:string) => {
     const allServices = await prisma.singleService.findMany({

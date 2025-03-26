@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { BusinessOnboardingSchema } from "./schema";
-import { boolean } from "zod";
+import { addMonths, getMonth, subMonths } from "date-fns";
 
 export type OnboardingState = Partial<BusinessOnboardingSchema> & {
     setData: (data: Partial<BusinessOnboardingSchema>) => void;
@@ -15,7 +15,6 @@ export type ContainerError = {
 export const useContainerErrorStore = create<ContainerError>()((set) => ({
   errorMessage: "",
   setContainerError: (error) => set(() => ({ errorMessage: error}))
-  
 }))
 
 type ModalStoreProps = {
@@ -95,3 +94,32 @@ const useWorkingDays = create<WorkingDaysStore>()((set) => ({
 }));
   
 export default useWorkingDays;
+
+
+type CalendarStoreProps = {
+  todayDate: Date
+  activeDate: Date
+  selectedDate: Date
+  setSelectedDate: (day:Date) => void
+  setNextActiveMonth: (date: Date) => void
+  setPreviousActiveMonth: (date: Date) => void
+}
+
+export const useCalendarStore = create<CalendarStoreProps>((set) => ({
+  todayDate: new Date(),
+  activeDate: new Date(),
+  selectedDate: new Date(),
+  setSelectedDate : (day) => set(()=>({selectedDate : day})),
+  setNextActiveMonth: (date) => set(()=>({activeDate : addMonths(date, 1)})),
+  setPreviousActiveMonth: (date) => set(()=>({activeDate : subMonths(date, 1)})),
+}));
+
+type EventTimeStoreProps = {
+  activeEventTime: Date | undefined
+  setActiveEventTime: (time:Date) => void
+}
+
+export const useEventTimeStore = create<EventTimeStoreProps>((set) => ({
+  activeEventTime: undefined,
+  setActiveEventTime : (time) => set(()=>({activeEventTime : time})),
+}));
