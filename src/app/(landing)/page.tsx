@@ -132,7 +132,7 @@ export default async function  Home() {
                   </div>
                   
                   <p className="inline rounded-2xl text-[11px] font-black text-[#000000] border-[0.5px] border-[#777777] py-[5px] px-[7px]">
-                    Car Detailing
+                    {service.category}
                   </p>
                 </div>  
               </div>

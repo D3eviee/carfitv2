@@ -99,10 +99,11 @@ export default useWorkingDays;
 type CalendarStoreProps = {
   todayDate: Date
   activeDate: Date
-  selectedDate: Date
+  selectedDate: Date | null
   setSelectedDate: (day:Date) => void
   setNextActiveMonth: (date: Date) => void
   setPreviousActiveMonth: (date: Date) => void
+  resetCalendarStore: () => void
 }
 
 export const useCalendarStore = create<CalendarStoreProps>((set) => ({
@@ -110,16 +111,52 @@ export const useCalendarStore = create<CalendarStoreProps>((set) => ({
   activeDate: new Date(),
   selectedDate: new Date(),
   setSelectedDate : (day) => set(()=>({selectedDate : day})),
-  setNextActiveMonth: (date) => set(()=>({activeDate : addMonths(date, 1)})),
-  setPreviousActiveMonth: (date) => set(()=>({activeDate : subMonths(date, 1)})),
+  setNextActiveMonth: (date) => set(()=>({activeDate : addMonths(date, 1), selectedDate:null})),
+  setPreviousActiveMonth: (date) => set(()=>({activeDate : subMonths(date, 1), selectedDate: null})),
+  resetCalendarStore: () => set(({activeDate : new Date(), selectedDate: new Date()}))
 }));
 
 type EventTimeStoreProps = {
-  activeEventTime: Date | undefined
-  setActiveEventTime: (time:Date) => void
+  activeEventTime: Date | null
+  setActiveEventTime: (time:Date | null) => void
 }
 
 export const useEventTimeStore = create<EventTimeStoreProps>((set) => ({
-  activeEventTime: undefined,
+  activeEventTime: null,
   setActiveEventTime : (time) => set(()=>({activeEventTime : time})),
 }));
+
+
+type Service = {
+  name: string;
+  durationType: string;
+  duration: number;
+  from: number;
+  to: number;
+  price: string;
+  id: string;
+  description: string;
+  serviceId: string;
+  categoryId: string;
+};
+
+type AppointmentStoreProps = {
+  selectedServices: string[]
+  resetSelectedServices: () => void
+  toggleSelectedService: (service: Service) => void
+}
+
+export const useAppointmentStore = create<AppointmentStoreProps>((set) => ({
+  selectedServices: [],
+  toggleSelectedService: (service) => set((state) => {
+      const isSelected = state.selectedServices.includes(service.id);
+
+      return {
+        selectedServices: isSelected
+          ? state.selectedServices.filter((id) => id !== service.id) // Usuń jeśli istnieje
+          : [...state.selectedServices, service.id], // Dodaj jeśli nie ma
+      };
+    }),
+    resetSelectedServices: () => set(()=>({selectedServices : []})),
+}));
+

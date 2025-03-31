@@ -1,11 +1,12 @@
 'use server'
 import prisma from "@/lib/db";
 import { categoryName } from "@/lib/schema";
-import { createServiceSession, createSession, serviceAuth } from "@/lib/session";
+import { createServiceSession, serviceAuth } from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
+import { subHours } from "date-fns";
 
 export const logout = async () => {
     const cookieSession = await cookies();
@@ -331,10 +332,96 @@ export const signInService = async (data: { email: string; password: string }) =
 };
 
 export const getAllServicesForBusiness = async (id:string) => {
+
+    const categories = await prisma.categories.findMany({
+        where: {
+            serviceId: id
+        },
+        select: {
+            id: true,
+            name: true,
+            services: true
+        }
+    })
+
+    const services = await prisma.singleService.findMany({
+        where: {
+            serviceId: id
+        },
+    })
+    return {categories, services}
+}
+
+
+export const getServiceDataForBooking = async (id:string) => {
     const allServices = await prisma.singleService.findMany({
         where: {
             serviceId: id
         },
     })
     return allServices
+}
+
+// type AddNewReservationProps =  {
+//     businessId: string
+//     clientId: string
+//     servicesIds: string[]
+//     reservationStart: Date 
+//     reservationEnd: Date
+//     duration: number
+//     charge: number
+// }
+
+export const addNewReservation = async (reservation) => {
+    try{
+        const newReservation = prisma.reservations.create({
+            data: {
+                businessId:reservation.businessId,
+                clientId:reservation.clientId,
+                servicesIds: reservation.servicesIds,
+                reservationYear: reservation.reservationYear,
+                reservationMonth: reservation.reservationMonth + 1,
+                reservationStart: reservation.reservationStart,
+                reservationEnd: reservation.reservationEnd,
+                duration: reservation.duration,
+                charge: reservation.charge,
+                status: reservation.status
+            }
+        })
+        return newReservation
+    }catch(err){
+        console.log(err)
+    }
+}
+
+export const reservationsForActiveMonth = async(activeDate:Date, businessId:string) => {
+    const activeDateYear = activeDate.getFullYear()
+    const activeDateMonth = activeDate.getMonth()+1
+
+    try{
+        const reservationForDay = prisma.reservations.findMany({
+            where: {
+                businessId: businessId,
+                reservationYear:activeDateYear,
+                reservationMonth: activeDateMonth,
+            },
+           select: {
+            reservationStart: true,
+            reservationEnd: true,
+            duration: true
+           },
+        })
+
+        const daysToUTC = (await reservationForDay).map((item) => {
+            return {
+                duration: item.duration,
+                reservationStart : subHours(item.reservationStart, 2),
+                reservationEnd: subHours(item.reservationEnd, 2)
+            }
+        })
+
+        return daysToUTC
+    }catch(err){
+        console.log(err)
+    }
 }

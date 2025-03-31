@@ -1,7 +1,8 @@
 'use client'
+import { useAppointmentStore } from "@/lib/store";
 import { cn, displayVisitTime } from "@/utils";
 import { Dot, MinusIcon, PlusIcon } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type Service = {
   name: string;
@@ -17,25 +18,14 @@ type Service = {
 };
 
 export const BookingServiceListItem = ({ service }: { service: Service }) => {
-  const router = useRouter()
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const selectedServices = searchParams.get("services")?.split("&") || [];
+  // ZUSTAND STORE FOR MANAGING SELECTED SERVICES
+  const selectedServices = useAppointmentStore((store) => store.selectedServices)
+  const toggleSelectedService = useAppointmentStore((store) => store.toggleSelectedService)
+
   const isSelected = selectedServices.includes(service.id);
 
   const handleOnClick = () => {
-    // adding or removing service from array with selected services
-    let updatedServices = isSelected
-      ? selectedServices.filter(id => id !== service.id) 
-      : [...selectedServices, service.id]
-
-    // creating new link based on selected services
-    const newParams = new URLSearchParams();
-    updatedServices.length > 0 
-      ? newParams.set("services", updatedServices.join("&"))
-      : newParams.delete("services"); // Usunięcie jeśli pusto
-
-    router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
+    toggleSelectedService(service)
   };
 
   return (

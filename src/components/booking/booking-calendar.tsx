@@ -1,18 +1,20 @@
 'use client'
-
-import {eachDayOfInterval, format, getDate, getDay, getDaysInMonth, getISODay, getMonth, getYear, lastDayOfMonth, subMonths } from "date-fns"; 
+import {eachDayOfInterval, format, getDate, getDaysInMonth, getISODay, getMonth, getYear, lastDayOfMonth, subMonths } from "date-fns"; 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BookingCalendarDay } from "./booking-calendar-day";
-import { useCalendarStore } from "@/lib/store";
-import { cn } from "@/utils";
-import { BookingEventTimeItem } from "./booking-event-time-item";
+import { useCalendarStore, useEventTimeStore } from "@/lib/store";
+import { cn, getServiceIdFromParams } from "@/utils";
 import { BookingEventTime } from "./booking-event-time";
+import { useQuery } from "@tanstack/react-query";
+import { reservationsForActiveMonth } from "@/actions/actions";
 
 export const BookingCalendar = () => {
+    const serviceId = getServiceIdFromParams()
     //ZUSTAND STORE
     const todayDate = useCalendarStore((store) => store.todayDate)
     const activeDate = useCalendarStore((store) => store.activeDate)
     const selcetedDate = useCalendarStore((store) => store.selectedDate)
+    const setActiveEventTime = useEventTimeStore(store => store.setActiveEventTime)
     const setNextActiveMonth = useCalendarStore((store) => store.setNextActiveMonth)
     const setPreviousActiveMonth = useCalendarStore((store) => store.setPreviousActiveMonth)
 
@@ -31,14 +33,31 @@ export const BookingCalendar = () => {
         end: new Date(activeYear, activeMonth, daysInMonthActiveMonth)
     })
 
+    const { data } = useQuery({
+        queryKey: ["getMonthVisits", activeDate],
+        queryFn: async () => {
+            const reservations = reservationsForActiveMonth(activeDate, serviceId)
+            return reservations
+        }
+    })
 
     const isPreviousMonthDisabled = () => {
         if(getYear(todayDate) == getYear(activeDate) && getMonth(todayDate) == getMonth(activeDate)) return true
         else false
     }
+    
+    const handlePreviousMonth = () => {
+        setPreviousActiveMonth(activeDate)
+        setActiveEventTime(null)
+    }
+
+    const handleNextMonth = () => {
+        setNextActiveMonth(activeDate)
+        setActiveEventTime(null)
+    }
 
     return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 w-7/12">
             {/* CALENDAR HEADING AND CONTROLS */}
             <div className=" flex flex-row justify-between items-center">
                 <h1 className="text-black text-xl font-medium tracking-normal">{`${format(activeDate, "MMMM")}, ${activeYear}`}</h1> 
@@ -46,11 +65,11 @@ export const BookingCalendar = () => {
                     <button 
                         className={cn("p-1 bg-black rounded-md hover:bg-[#222]", isPreviousMonthDisabled() && "bg-[#333] hover:bg-[#333]")}
                         disabled={isPreviousMonthDisabled()}
-                        onClick={()=>setPreviousActiveMonth(activeDate)}
+                        onClick={handlePreviousMonth}
                     >
                         <ChevronLeft color="#FFF"/>
                     </button>
-                    <button className="p-1 bg-black rounded-md hover:bg-[#222]" onClick={()=>setNextActiveMonth(activeDate)}>
+                    <button className="p-1 bg-black rounded-md hover:bg-[#222]" onClick={handleNextMonth}>
                         <ChevronRight color="#FFF"/>
                     </button>
                 </div>
@@ -92,13 +111,17 @@ export const BookingCalendar = () => {
                 </div>
             </div>
             {/* {AVAILABLE DATES} */}
+
             <div className="flex flex-col gap-7">
-                <h2 className="mbtext-base text-black font-semibold ">
-                    {`${format(selcetedDate, "EEEE")}, ${format(selcetedDate, "do")} ${format(selcetedDate, "MMMM")} ${format(selcetedDate, "y") }`}
-                </h2>
-            
+                {
+                    selcetedDate != undefined && 
+                    <h2 className="mbtext-base text-black font-semibold ">
+                        {`${format(selcetedDate, "EEEE")}, ${format(selcetedDate, "do")} ${format(selcetedDate, "MMMM")} ${format(selcetedDate, "y") }`}
+                    </h2>
+                }
+                
                 {/* LIST OF AVAILABLE HOURS*/}
-                <BookingEventTime/>
+                {data && selcetedDate ? <BookingEventTime reservations={data}/> : null}
             </div>
         </div>
     )

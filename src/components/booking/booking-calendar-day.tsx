@@ -1,19 +1,19 @@
-import { useCalendarStore } from "@/lib/store";
+import { useCalendarStore, useEventTimeStore } from "@/lib/store";
 import { cn } from "@/utils"
 import { getDate, getMonth, getYear, isToday } from "date-fns"
 
 export const BookingCalendarDay = ({date}:{date:Date}) => {
+    const setActiveEventTime = useEventTimeStore(store => store.setActiveEventTime)
     const selecetedDate = useCalendarStore((store) => store.selectedDate)
     const todayDate = useCalendarStore((store) => store.todayDate)
     const setSelectedDate = useCalendarStore((store) => store.setSelectedDate)
-
 
     const dateYear = getYear(date)
     const dateMonth = getMonth(date)
     const dateDay =  getDate(date)
 
     const isDaySelected = () => {
-        if(getYear(selecetedDate) == dateYear && getMonth(selecetedDate) == dateMonth  &&  getDate(selecetedDate) == dateDay) return true
+        if(getYear(selecetedDate!) == dateYear && getMonth(selecetedDate!) == dateMonth  &&  getDate(selecetedDate!) == dateDay) return true
         else return false
     }
 

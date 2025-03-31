@@ -69,7 +69,7 @@ model Review {
 }
 
 model SingleService {
-  id           String   @id @default(uuid())
+  id           String @id @default(uuid())
   name         String
   description  String
   price        String
@@ -78,21 +78,35 @@ model SingleService {
   to           Int
   duration     Int
 
-  serviceId    String
-  service      Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  categoryId   String
-  category     Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
 model Categories {
-  id        String      @id @default(uuid())
-  name      String      
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   serviceId String
-  service   Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  services  SingleService[]
+  services SingleService[]
+}
+
+model Reservations {
+  id          Int      @id @default(autoincrement())
+  businessId  String
+  clientId    String
+  servicesIds String[]
+  reservationYear Int
+  reservationMonth Int
+  reservationStart DateTime
+  reservationEnd DateTime
+  duration Int
+  charge Float
+  status String
 }
