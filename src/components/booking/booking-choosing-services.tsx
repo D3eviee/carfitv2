@@ -8,8 +8,7 @@ export default function BookingChoosingServices({data}) {
   
   // extracting ID
   const id = getServiceIdFromParams()
-
-
+  
   // marking category after loading
   useEffect(() => {
     if (data && data.length > 0) {

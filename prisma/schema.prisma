@@ -14,14 +14,15 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  email     String    @unique
-  password  String
-  image     String?
-  provider  String? // "credentials" lub "google"
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  id          String        @id @default(uuid())
+  name        String
+  email       String        @unique
+  password    String
+  image       String?
+  provider    String? // "credentials" lub "google"
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt
+  Reservation Reservation[]
 }
 
 model Service {
@@ -97,16 +98,18 @@ model Categories {
   services SingleService[]
 }
 
-model Reservations {
-  id          Int      @id @default(autoincrement())
-  businessId  String
-  clientId    String
-  servicesIds String[]
-  reservationYear Int
+model Reservation {
+  id               Int      @id @default(autoincrement())
+  businessId       String
+  servicesIds      String[]
+  reservationYear  Int
   reservationMonth Int
   reservationStart DateTime
-  reservationEnd DateTime
-  duration Int
-  charge Float
-  status String
+  reservationEnd   DateTime
+  duration         Int
+  charge           Float
+  status           String
+
+  clientId String
+  client   User   @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }

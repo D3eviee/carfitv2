@@ -16,7 +16,7 @@ export const BookingEventTimeItem = ({time}:{time:Date}) => {
     return (
         <p 
             className={cn(" text-center text-base text-[#111] font-medium py-1.5 rounded-md border-[0.5px] hover:cursor-pointer",
-                isEqual(activeEventTime, time) ? "bg-[#222] text-white" : "bg-[#F2F4F8] hover:bg-[#EEE]"
+                isEqual(activeEventTime!, time) ? "bg-[#222] text-white" : "bg-[#F2F4F8] hover:bg-[#EEE]"
             )}
             onClick={handleChoosingTime}
         >

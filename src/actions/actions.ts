@@ -374,7 +374,7 @@ export const getServiceDataForBooking = async (id:string) => {
 
 export const addNewReservation = async (reservation) => {
     try{
-        const newReservation = prisma.reservations.create({
+        const newReservation = prisma.reservation.create({
             data: {
                 businessId:reservation.businessId,
                 clientId:reservation.clientId,
@@ -399,7 +399,7 @@ export const reservationsForActiveMonth = async(activeDate:Date, businessId:stri
     const activeDateMonth = activeDate.getMonth()+1
 
     try{
-        const reservationForDay = prisma.reservations.findMany({
+        const reservationForDay = prisma.reservation.findMany({
             where: {
                 businessId: businessId,
                 reservationYear:activeDateYear,

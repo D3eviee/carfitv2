@@ -160,3 +160,25 @@ export const useAppointmentStore = create<AppointmentStoreProps>((set) => ({
     resetSelectedServices: () => set(()=>({selectedServices : []})),
 }));
 
+
+
+type BusinessCalendarNavigationStore = {
+  openCalendarType: string,
+  setOpenCalendar: (calendarType:string) => void
+}
+
+export const useBusinessCalendarNavigationStore = create<BusinessCalendarNavigationStore>((set) => ({
+  openCalendarType: "week",
+  setOpenCalendar : (calendarType) => set(()=>({openCalendarType : calendarType})),
+}));
+
+
+type BusinessSmallCallendarStore = {
+  activeDay : Date
+  setActiveDay: (day:Date) => void
+}
+
+export const useBusinessSmallCallendarStore = create<BusinessSmallCallendarStore>((set) => ({
+  activeDay: new Date(),
+  setActiveDay : (day) => set(()=>({activeDay : day})),
+}));

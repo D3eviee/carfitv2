@@ -26,7 +26,6 @@ export const getAllClientAppointments = async (id:string) => {
 }
 
 export const getServiceName = async (serviceId: string) => {
-
     const serviceName = await prisma.service.findUnique({
         where: {
             id: serviceId
@@ -42,3 +41,5 @@ export const getServiceName = async (serviceId: string) => {
 
     return serviceName
 };
+
+
