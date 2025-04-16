@@ -2,14 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 import {createSession} from "@/lib/session";
-import { error } from "console";
 
 export async function POST(req: NextRequest) {
     try {
         const {email, password } = await req.json();
 
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = await prisma.client.findUnique({
             where: { email: email },
         });
 

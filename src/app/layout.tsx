@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { QueryProvider } from "@/components/providers/query-provider";
-
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,6 +17,7 @@ export default  function RootLayout({children}: Readonly<{children: React.ReactN
     <html lang="en">
       <body className={`${inter.className} antialiased bg-[#FDFCFF]`}>
         <QueryProvider>
+        <ReactQueryDevtools position="bottom" buttonPosition="bottom-right"/>
         {children}
         </QueryProvider>
       </body>

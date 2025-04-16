@@ -1,7 +1,6 @@
-import { IoMdArrowBack } from "react-icons/io";
+'use client'
 import Link from 'next/link';
 import Image from 'next/image';
-import { RiMoreFill } from "react-icons/ri";
 import DashboardContentContainer from '@/components/dashboard/dashboard-content-container';
 import { getServiceData } from "@/actions/actions";
 import { serviceAuth } from "@/lib/session";

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import bcrypt from "bcryptjs";
 import {createSession} from "@/lib/session";
 
 export async function POST(req: NextRequest) {
@@ -8,7 +7,7 @@ export async function POST(req: NextRequest) {
         const { name, email, password } = await req.json();
 
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = await prisma.client.findUnique({
             where: { email },
         });
         if (existingUser) {
@@ -16,7 +15,7 @@ export async function POST(req: NextRequest) {
         }
 
         //create new user and add to database
-        const user = await prisma.user.create({
+        const user = await prisma.client.create({
             data: {
                 name,
                 email,

@@ -20,3 +20,8 @@ type serviceCategoryProps = {
   name: string,
   serviceId?: string
 }
+
+type CategoriesData = {
+  id: string
+  name: string
+}

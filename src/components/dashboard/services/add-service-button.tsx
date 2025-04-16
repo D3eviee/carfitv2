@@ -1,34 +1,23 @@
 'use client'
-import { useEffect, useState } from "react"
-import { useModalStore } from "@/lib/store";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import ModalProvider from "@/components/providers/modal-provider";
+import { useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { addNewService, getServicesData } from "@/actions/actions";
 import { FormButton } from "@/components/form-button";
 import { FormLabel } from "@/components/form-label";
 import { FormInput } from "@/components/form-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newServiceSchaema } from "@/lib/schema";
+import ModalProvider from "@/components/providers/modal-provider";
+import { addNewService } from "@/app/dashboard/actions";
 
-export function AddServiceButton(){
-  const toggleServiceModal = useModalStore((store) => store.toggleServiceModal)
-  const isAddServiceModalOpen = useModalStore((store) => store.isAddServiceModalOpen)
+export function AddServiceButton({categories}:{categories:CategoriesData[]}){
   const queryClient = useQueryClient();
-    const [pickedFromTime, setPickedFromTime] = useState(15)
-  
-    const timeOptions = [{time: "30min", value: 30}, {time: "45min", value: 45}, {time: "1h", value: 60}, {time: "1h 15min", value: 75},{time: "1h 30min", value: 90}, {time:  "1h 45min", value: 105}, {time: "2h", value: 120}, {time: "2h 15min", value: 135},{time: "2h 30min" , value: 150}, {time:"2h 45min" , value: 165}, {time: "3h", value: 180}, {time: "3h 15min", value: 195}, {time: "3h 30min", value: 210} , {time: "3h 30min", value: 225}, {time: "3h 45min", value: 240}, {time: "4h", value: 255}, {time: "4h 15min", value: 270},{time: "4h 30min" , value: 285}, {time:"4h 45min" , value: 300}, {time: "5h", value: 315}, {time: "5h 15min", value: 330}, {time: "5h 30min" , value: 345}, {time:"5h 45min" , value: 360}, {time:"6h" , value: 375}]
 
-  const [mounted, setMounted] = useState(false);
+  // STATE FOR MANAGING OPENING MODAL
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    setMounted(true)
-  }, )
-
-    const {data} = useQuery({
-        queryKey: ['formCategories'],
-        queryFn: getServicesData
-    })
+  const [pickedFromTime, setPickedFromTime] = useState(15)
+  const timeOptions = [{time: "30min", value: 30}, {time: "45min", value: 45}, {time: "1h", value: 60}, {time: "1h 15min", value: 75},{time: "1h 30min", value: 90}, {time:  "1h 45min", value: 105}, {time: "2h", value: 120}, {time: "2h 15min", value: 135},{time: "2h 30min" , value: 150}, {time:"2h 45min" , value: 165}, {time: "3h", value: 180}, {time: "3h 15min", value: 195}, {time: "3h 30min", value: 210} , {time: "3h 30min", value: 225}, {time: "3h 45min", value: 240}, {time: "4h", value: 255}, {time: "4h 15min", value: 270},{time: "4h 30min" , value: 285}, {time:"4h 45min" , value: 300}, {time: "5h", value: 315}, {time: "5h 15min", value: 330}, {time: "5h 30min" , value: 345}, {time:"5h 45min" , value: 360}, {time:"6h" , value: 375}]
 
     const [choosenDurationType, setChoosenDurationType] = useState<string>("precise")
     const { register, handleSubmit, getValues, setValue, reset, formState, watch} = useForm<serviceModalProps>({
@@ -48,18 +37,17 @@ export function AddServiceButton(){
     const mutation = useMutation({
         mutationFn: async () => {
             if(getValues("durationType") == "precise"){
-                addNewService(getValues())
+               return await addNewService(getValues())
             }
             else {
-                addNewService({...getValues(), duration: getValues("to")-getValues("from")})
+               return await  addNewService({...getValues(), duration: getValues("to")-getValues("from")})
             }
         }, 
-
         onSuccess: (data) => {
           if (data) {
-            queryClient.setQueryData(['category'], data);
+            queryClient.invalidateQueries({ queryKey: ["category"] });
           }
-          toggleServiceModal();
+          setIsModalOpen(false);
           reset()
         },
         onError: (error) => {
@@ -68,9 +56,9 @@ export function AddServiceButton(){
       });
 
     return(
-      <>{isAddServiceModalOpen && <ModalProvider modalTitle="Add new service">
       <div>
-                    <form className="flex flex-col gap-5" onSubmit={handleSubmit(() => mutation.mutate())}>
+        <ModalProvider title="Add new service" open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <form className="flex flex-col gap-5" onSubmit={handleSubmit(() => mutation.mutate())}>
                         {/* SERVICE NAME INPUT */}
                         <div>
                             <div className="flex flex-row justify-between">
@@ -87,7 +75,7 @@ export function AddServiceButton(){
                                 <FormLabel text="Service category" />
                                 <select className="border-[0.5px] border-[#E8E8E8] w-52 p-2" id="category" {...register('category')} required>
                                 <option value="" disabled hidden>Wybierz kategorię</option>
-                                    {data?.map((category, index)=>{
+                                    {categories.map((category, index)=>{
                                         return (<option key={index} value={category.id}>{category.name}</option>)
                                     })}
                                 </select>
@@ -163,16 +151,20 @@ export function AddServiceButton(){
                         {/* BUTTONS FOR CANCELING AND ADDING SERVICE */}
                         <div className="flex flex-row justify-end w-full" >
                             <div className="w-1/3 flex flex-row gap-3">
-                                <FormButton label="Cancel" type="button" onClick={()=>{toggleServiceModal(); reset()}} className="text-[#3F3F3F] bg-[#F2F2F2] hover:bg-[#E2E2E2]"/>
+                                <FormButton label="Cancel" type="button" onClick={()=>{setIsModalOpen(false); reset()}} className="text-[#3F3F3F] bg-[#F2F2F2] hover:bg-[#E2E2E2]"/>
                                 <FormButton label="Add" type="submit" className="hover:bg-[#333333]"/>
                             </div>
                         </div>
                     </form>
-                </div>
       </ModalProvider>
-      }
-        <button type="button" className="bg-[#000] text-white text-sm font-normal py-2 px-3 rounded-[5px] hover:bg-[#111] hover:cursor-pointer" onClick={toggleServiceModal}>Add service</button>
-      </>
+      <button 
+        type="button" 
+        className="bg-[#000] text-white text-sm font-normal py-2 px-3 rounded-[5px] hover:bg-[#111] hover:cursor-pointer" 
+        onClick={() => setIsModalOpen(true)}
+        >
+            Add service
+            </button>
+      </div>
     )
   }
 

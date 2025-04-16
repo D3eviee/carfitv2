@@ -8,7 +8,7 @@ import { userAuth } from "@/lib/session";
 import { useAppointmentStore, useCalendarStore, useEventTimeStore } from "@/lib/store";
 import { cn, getServiceIdFromParams } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addHours, addMinutes, format, getHours, getMinutes, getMonth, getYear } from "date-fns";
+import { addMinutes, format, getHours, getMinutes, getMonth, getYear } from "date-fns";
 import { Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -71,9 +71,6 @@ export default function Booking() {
 
   const moveToNextBookingStep = () => {
     setActiveBookingStep((step) => step + 1);
-    console.log(selectedDate)
-    console.log(selectedServices)
-    console.log(activeEventTime)
   }
 
   const isButtonDisabled = () => {
@@ -91,8 +88,8 @@ export default function Booking() {
     mutationKey: ["addReservation"],
     mutationFn: async () => {
       try{
-    let appointmentDuration = 0
-    let appointmentCharge = 0
+        let appointmentDuration = 0
+        let appointmentCharge = 0
       
     services?.forEach((item) => {
       if (selectedServices.includes(item.id)) {
@@ -104,14 +101,14 @@ export default function Booking() {
     const data = {
       businessId: id,
       clientId:  (await userAuth()).id,
-      servicesIds: selectedServices,
+      servicesId: selectedServices,
       reservationYear: getYear(activeEventTime!),
       reservationMonth: getMonth(activeEventTime!)+1,
       reservationStart: activeEventTime,
       reservationEnd: addMinutes(activeEventTime!, appointmentDuration),
       duration: appointmentDuration,
       charge: appointmentCharge,
-      status: "Umówiona",
+      status: "Zarezerwowana",
     }
         
         const result = await addNewReservation(data);
@@ -127,9 +124,6 @@ export default function Booking() {
   const handleBooking = () =>{
     try{ 
       mutation.mutate()
-      // resetCalendarStore()
-      // resetSelectedServices()
-      // setActiveEventTime(null)
       router.replace('/')
     }catch(error){
       console.log(error)
@@ -151,7 +145,6 @@ export default function Booking() {
         {activeBookingStep == 1 && <BookingChoosingServices data={data}/>}
         {activeBookingStep == 2 && <BookingCalendar/>}
       
-        
         {/* APPOINTMENT SUMMARY */}
         <div className={cn("", activeBookingStep == 3 ? "w-full flex justify-center" : "w-4/12")}>
           <div className={cn("flex flex-col gap-5",  activeBookingStep == 3 ? "w-4/12" : "w-full")}>

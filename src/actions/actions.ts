@@ -1,6 +1,6 @@
 'use server'
 import prisma from "@/lib/db";
-import { categoryName } from "@/lib/schema";
+
 import { createServiceSession, serviceAuth } from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
 import { cookies } from "next/headers";
@@ -17,7 +17,7 @@ export const logout = async () => {
 export const checkIfEmailExists = async (email: string) => {
     try {
         // Check if user already exists
-        const existingUser = await prisma.service.findUnique({
+        const existingUser = await prisma.business.findUnique({
             where: { email },
         });
 
@@ -36,7 +36,7 @@ export const createService = async (data: OnboardingState, workingDays: WorkingD
 
     try {
         //create new service and add to database
-        const service = await prisma.service.create({
+        const service = await prisma.business.create({
             data: {
                 email: email!,
                 password: password!,
@@ -81,7 +81,7 @@ export const createService = async (data: OnboardingState, workingDays: WorkingD
 
 export const getServiceData = async (id: string) => {
     try {
-        const serviceData = await prisma.service.findFirst({
+        const serviceData = await prisma.business.findFirst({
             where: {
                 id: id
             },
@@ -125,7 +125,7 @@ export const getServiceReviews = async (id: string) => {
     try {
         const serviceReviews = await prisma.review.findMany({
             where: {
-                serviceID: id
+                serviceId: id
             },
             orderBy: {
                 createdAt: "desc"
@@ -141,150 +141,12 @@ export const getServiceReviews = async (id: string) => {
 
 export const getRecommendedServices = async () => {
     try {
-        const recommended = await prisma.service.findMany({ take: 5 });
+        const recommended = await prisma.business.findMany({ take: 5 });
         return recommended
 
     } catch (error) {
         console.error("Error fetching recommended services:", error);
         return;
-    }
-}
-
-
-export type AddNewServiceProps = {
-    serviceId: string,
-    name: string,
-    description: string,
-    price: string,
-    durationType: string,
-    duration: number,
-    category: string,
-    from: number,
-    to: number,
-}
-
-export const addNewService = async (serviceData: serviceModalProps) => {
-    try {
-        const serviceId = await serviceAuth()
-
-
-        const newService = await prisma.singleService.create({
-            data: {
-                serviceId: serviceId.id,
-                categoryId: serviceData.category,
-                name: serviceData.name,
-                price: serviceData.price,
-                description: serviceData.description,
-                durationType: serviceData.durationType,
-                duration: serviceData.duration,
-                from: serviceData.from,
-                to: serviceData.to
-            },
-        });
-        
-        const data = await prisma.categories.findMany({
-            where: {
-                serviceId: serviceId.id
-            },
-            select:{
-                name: true,
-                services:true,
-            }
-        })
-
-        return data
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-export const addNewCategory = async ({ name }: { name: string }) => {
-    try {
-        const validation = categoryName.safeParse(name);
-        if (!validation.success) {
-            throw new Error("Category name needs to be plain text");
-        }
-
-        const serviceId = await serviceAuth();
-        const isExisting = await prisma.categories.findFirst({
-            where: { serviceId: serviceId.id, name: name}
-        });
-
-        if (isExisting) {
-            throw new Error("Category already exists");
-        }
-
-        await prisma.categories.create({
-            data: { serviceId: serviceId.id, name }
-        });
-
-        return { success: true };
-    } catch (error: any) {
-        return { success: false, message: error.message };
-    }
-};
-
-export const deleteCategory = async (id:string) => {
-    try {
-        await prisma.categories.delete({
-            where: {
-                id: id
-            }
-        })
-
-        return {success:true}
-    } catch (error: any) {
-        return { success: false, message: error.message };
-    }
-};
-
-export const deleteService = async (id:string) => {
-    try {
-        await prisma.singleService.delete({
-            where: {
-                id: id
-            }
-        })
-
-        return {success:true}
-    } catch (error: any) {
-        return { success: false, message: error.message };
-    }
-};
-
-
-export const getServicesData = async () => {
-    try {
-        const serviceId = await serviceAuth()
-
-        const servicesData = await prisma.categories.findMany({
-            where: {
-                serviceId: serviceId.id
-            },
-            select: {
-                id: true,
-                name: true,
-                services: {
-                    select: {
-                        id: true,
-                        name: true,
-                        durationType: true,
-                        from: true,
-                        to: true,
-                        duration: true,
-                        price: true,
-                        description: true
-                    }
-                },
-            },
-            orderBy: {
-                createdAt: "asc"
-            }
-        })
-
-        return servicesData
-    } catch (error) {
-        console.log("There was a problem with getting categories", error)
     }
 }
 
@@ -306,7 +168,7 @@ export const signInService = async (data: { email: string; password: string }) =
     try{
         const { email, password } = data;
   
-        const serviceData = await prisma.service.findUnique({
+        const serviceData = await prisma.business.findUnique({
           where: { email }
         });
       
@@ -374,20 +236,32 @@ export const getServiceDataForBooking = async (id:string) => {
 
 export const addNewReservation = async (reservation) => {
     try{
-        const newReservation = prisma.reservation.create({
+        const newReservation = await prisma.reservation.create({
             data: {
-                businessId:reservation.businessId,
-                clientId:reservation.clientId,
-                servicesIds: reservation.servicesIds,
-                reservationYear: reservation.reservationYear,
-                reservationMonth: reservation.reservationMonth + 1,
-                reservationStart: reservation.reservationStart,
-                reservationEnd: reservation.reservationEnd,
-                duration: reservation.duration,
-                charge: reservation.charge,
-                status: reservation.status
+              businessId: reservation.businessId,
+              clientId: reservation.clientId,
+              reservationYear: reservation.reservationYear,
+              reservationMonth: reservation.reservationMonth + 1,
+              reservationStart: reservation.reservationStart,
+              reservationEnd:reservation.reservationEnd,
+              duration: reservation.duration,
+              charge: reservation.charge,
+              status: reservation.status,
             }
-        })
+          });
+          
+
+          await Promise.all(
+            reservation.servicesId.map((serviceId) =>
+              prisma.reservationServices.create({
+                data: {
+                  reservationId: newReservation.id,
+                  serviceId: serviceId
+                }
+              })
+            )
+          );
+
         return newReservation
     }catch(err){
         console.log(err)

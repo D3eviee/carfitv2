@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,7 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum DurationType {
+  MINUTES
+  HOURS
+}
+
+model Client {
   id          String        @id @default(uuid())
   name        String
   email       String        @unique
@@ -22,10 +27,13 @@ model User {
   provider    String? // "credentials" lub "google"
   createdAt   DateTime      @default(now())
   updatedAt   DateTime?     @updatedAt
+
   Reservation Reservation[]
+
+  reviews Review[]
 }
 
-model Service {
+model Business {
   id          String   @id @default(uuid())
   email       String   @unique
   password    String
@@ -44,8 +52,12 @@ model Service {
   updatedAt   DateTime @updatedAt
 
   workingDays WorkingDay[]
-  services    SingleService[]
+  services    Service[]
   categories  Categories[]
+
+  reservations Reservation[]
+  
+  reviews Review[]
 }
 
 model WorkingDay {
@@ -57,19 +69,23 @@ model WorkingDay {
   updatedAt DateTime @updatedAt
 
   serviceId String
-  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service   Business @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
 model Review {
   id        String   @id @default(uuid())
-  serviceID String
-  clientId  String
   content   String
   rate      Int
   createdAt DateTime @default(now())
+
+  service   Business  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId String
+  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId  String
 }
 
-model SingleService {
+
+model Service {
   id           String @id @default(uuid())
   name         String
   description  String
@@ -80,10 +96,12 @@ model SingleService {
   duration     Int
 
   serviceId String
-  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service   Business @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   categoryId String
   category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  reservations ReservationServices[]
 }
 
 model Categories {
@@ -93,15 +111,14 @@ model Categories {
   updatedAt DateTime @updatedAt
 
   serviceId String
-  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service   Business @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  services SingleService[]
+  services Service[]
 }
 
 model Reservation {
-  id               Int      @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   businessId       String
-  servicesIds      String[]
   reservationYear  Int
   reservationMonth Int
   reservationStart DateTime
@@ -111,5 +128,17 @@ model Reservation {
   status           String
 
   clientId String
-  client   User   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  services ReservationServices[]
+}
+
+model ReservationServices {
+  reservation    Reservation   @relation(fields: [reservationId], references: [id])
+  reservationId  Int
+  service  Service @relation(fields: [serviceId], references: [id])
+  serviceId      String
+
+  @@id([reservationId, serviceId])
 }

@@ -44,3 +44,12 @@ export function displayVisitTime(rangeBeginning:number, rangeEnding:number, dura
         return "";
     }
 }
+
+export function displayAppointmentTime(duration: number){
+    const hours = Number(Math.floor(duration/60))
+    const minutes = Number(duration%60)
+    
+    if(hours == 0) return `${minutes}min` 
+    else if(minutes == 0 )return `${hours}h` 
+    else return `${hours}h ${minutes}min`
+}

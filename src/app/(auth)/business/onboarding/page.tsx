@@ -1,22 +1,19 @@
 "use client";
-import Image from "next/image";
+import Image from "next/image"
+import Link from "next/link"
 import login_image from "../../../../../public/login_image.jpg";
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import OnboardingEmail from "@/components/onboarding/onboarding-email";
-import OnboardingCategory from "@/components/onboarding/onboarding-category";
 import { OnboardingNav } from "@/components/onboarding/onboarding-nav";
 import { useState } from "react";
 import FormHeader from "@/components/form-header";
 import OnboardingAdress from "@/components/onboarding/onboarding-address";
 import OnboardingBusienssInformation from "@/components/onboarding/onboarding-business-info";
-import OnboardingWorkingDays from "@/components/onboarding/onboarding-working-days";
-import { ErrorAlertContainer } from "@/components/error-alert-container";
-import { useContainerErrorStore } from "@/lib/store";
+import OnboardingWorkingDays from "@/components/onboarding/onboarding-working-days"
+import OnboardingEmail from "@/components/onboarding/onboarding-email";
+import OnboardingCategory from "@/components/onboarding/onboarding-category";
 
 export default function Onboardoarding() {
   const [activePage, setActivePage] = useState<number>(0)
-  let activeForm = <OnboardingEmail onClick={() => setActivePage((prev) => prev + 1)}/>
 
   const formHeadings = [
     {title: "Welcome to CarFit" , subtitle: "Create account for your business and let it grow"},
@@ -26,28 +23,7 @@ export default function Onboardoarding() {
     {title: "Your Working Days" , subtitle: "Let clients know when they can book a visit"},
   ]
 
-  switch (activePage) {
-    case 0:
-      activeForm = <OnboardingEmail onClick={() => setActivePage((prev) => prev + 1)}/>
-      break;
-    case 1:
-      activeForm = <OnboardingCategory onClick={() => setActivePage((prev) => prev + 1)}/>
-      break;
-    case 2:
-      activeForm = <OnboardingBusienssInformation onClick={() => setActivePage((prev) => prev + 1)} />
-      break;
-    case 3:
-      activeForm = <OnboardingAdress onClick={() => setActivePage((prev) => prev + 1)} />
-      break;
-    case 4:
-      activeForm = <OnboardingWorkingDays/>
-      break;
-    default:
-      activeForm = <div>ERROR OCCURED</div>
-  }
-
   return (
-    <ErrorAlertContainer>
       <div className="w-full h-screen flex">
       {/*LEFT SIDE FORM*/}
         <div className="w-1/2 bg-[#FDFCFF] text-white flex flex-col items-center justify-center">
@@ -61,12 +37,16 @@ export default function Onboardoarding() {
           {/*FORM BOX*/}
           <div className="w-[380px] max-h-[63s0px] bg-[#FFFFFF] flex flex-col rounded-xl shadow-[0px_0px_35px_5px_#D4D4D4] pb-[50px]">
             {/*FORM NAVIGATION*/}
-            {activePage == 0 ? <> </> : <OnboardingNav onClick={() => setActivePage((prev) => prev - 1)} />}
+            {activePage !== 0 && <OnboardingNav onClick={() => setActivePage((prev) => prev - 1)} />}
             {/*FORM HEADER*/}
             <FormHeader title={formHeadings[activePage].title} subtitle={formHeadings[activePage].subtitle}/>
             {/*FORM*/}
             <div className="px-10">
-              {activeForm}
+                {activePage == 0 && <OnboardingEmail onClick={() => setActivePage((prev) => prev + 1)}/>}
+                {activePage == 1 && <OnboardingCategory onClick={() => setActivePage((prev) => prev + 1)}/> }
+                {activePage == 2 &&  <OnboardingBusienssInformation onClick={() => setActivePage((prev) => prev + 1)} />}
+                {activePage == 3 && <OnboardingAdress onClick={() => setActivePage((prev) => prev + 1)} /> }
+                {activePage == 4 && <OnboardingWorkingDays/>}
             </div>
           </div>
 
@@ -77,6 +57,5 @@ export default function Onboardoarding() {
           <Image src={login_image} alt="login image" className="h-full object-cover"/>
         </div>
       </div>
-    </ErrorAlertContainer>
   );
 }
