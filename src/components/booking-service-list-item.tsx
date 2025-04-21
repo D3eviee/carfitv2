@@ -2,7 +2,6 @@
 import { useAppointmentStore } from "@/lib/store";
 import { cn, displayVisitTime } from "@/utils";
 import { Dot, MinusIcon, PlusIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 type Service = {
   name: string;

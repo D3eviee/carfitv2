@@ -36,6 +36,7 @@ export function displayVisitTime(rangeBeginning:number, rangeEnding:number, dura
 
  export function getServiceIdFromParams() {
     const param = useParams();
+    
     if (Array.isArray(param.business)) {
         return param.business[param.business.length - 1]; // Handle case if it's an array
     } else if (param.business) {

@@ -21,8 +21,6 @@ export const BookingSummaryItem = ({serviceData, activeStep}:{serviceData: Servi
     return
   };
 
-  console.log(activeStep)
-
   return (
     <div className="flex flex-row justify-between items-center w-full bg-[#F6F6F6] p-2.5 rounded-md">
         <div className="flex flex-col gap-1.5">

@@ -6,9 +6,6 @@ import { BookingServiceListItem } from "../booking-service-list-item";
 export default function BookingChoosingServices({data}) {
   const [activeCategoryServices, setActiveCategoryServices] = useState<string>("");
   
-  // extracting ID
-  const id = getServiceIdFromParams()
-  
   // marking category after loading
   useEffect(() => {
     if (data && data.length > 0) {

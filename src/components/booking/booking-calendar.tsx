@@ -6,14 +6,15 @@ import { useCalendarStore, useEventTimeStore } from "@/lib/store";
 import { cn, getServiceIdFromParams } from "@/utils";
 import { BookingEventTime } from "./booking-event-time";
 import { useQuery } from "@tanstack/react-query";
-import { reservationsForActiveMonth } from "@/actions/actions";
+import { getActiveMonthAppointments } from "@/app/(landing)/actions";
 
 export const BookingCalendar = () => {
     const serviceId = getServiceIdFromParams()
+
     //ZUSTAND STORE
     const todayDate = useCalendarStore((store) => store.todayDate)
     const activeDate = useCalendarStore((store) => store.activeDate)
-    const selcetedDate = useCalendarStore((store) => store.selectedDate)
+    const selcetedDate = useCalendarStore((store) => store.selectedDate) //SELECTED CALENDAR DAY
     const setActiveEventTime = useEventTimeStore(store => store.setActiveEventTime)
     const setNextActiveMonth = useCalendarStore((store) => store.setNextActiveMonth)
     const setPreviousActiveMonth = useCalendarStore((store) => store.setPreviousActiveMonth)
@@ -34,13 +35,12 @@ export const BookingCalendar = () => {
     })
 
     const { data } = useQuery({
-        queryKey: ["getMonthVisits", activeDate],
+        queryKey: ["getActiveMonthAppointments", activeDate],
         queryFn: async () => {
-            const reservations = reservationsForActiveMonth(activeDate, serviceId)
+            const reservations = await getActiveMonthAppointments(activeDate, serviceId)
             return reservations
         }
     })
-
     const isPreviousMonthDisabled = () => {
         if(getYear(todayDate) == getYear(activeDate) && getMonth(todayDate) == getMonth(activeDate)) return true
         else false
@@ -55,6 +55,7 @@ export const BookingCalendar = () => {
         setNextActiveMonth(activeDate)
         setActiveEventTime(null)
     }
+
 
     return (
         <div className="flex flex-col gap-8 w-7/12">
@@ -115,7 +116,7 @@ export const BookingCalendar = () => {
             <div className="flex flex-col gap-7">
                 {
                     selcetedDate != undefined && 
-                    <h2 className="mbtext-base text-black font-semibold ">
+                    <h2 className="text-base text-black font-semibold ">
                         {`${format(selcetedDate, "EEEE")}, ${format(selcetedDate, "do")} ${format(selcetedDate, "MMMM")} ${format(selcetedDate, "y") }`}
                     </h2>
                 }

@@ -1,7 +1,7 @@
 'use server'
 import prisma from "@/lib/db"
 import { serviceAuth } from "@/lib/session";
-import { format, getDate, getMonth, getYear, isEqual, isSameDay, set, subDays } from "date-fns";
+import { format, getDate, getMonth, getYear, isSameDay, set, subDays, subHours } from "date-fns";
 
 export const getAppointmentsForWeekInterval = async (weekInterval) => {
     return await prisma.reservation.findMany({
@@ -12,6 +12,8 @@ export const getAppointmentsForWeekInterval = async (weekInterval) => {
         },
       },
       select: {
+        clientPhone: true, 
+        clientName: true,
         duration : true,
         reservationStart: true,
         charge: true,
@@ -384,5 +386,96 @@ export const getLastSevenDaysServicesNumbers = async () => {
     return topServices
   } catch (error) {
     console.log(error)
+  }
+}
+
+
+export const getActiveMonthAppointments = async(date:Date) => {
+  const selectedDate = new Date(date)
+
+  const activeDateYear = selectedDate.getFullYear()
+  const activeDateMonth = selectedDate.getMonth()+1
+
+  try{
+      const businessData = await serviceAuth()
+
+      const reservationForDay = await prisma.reservation.findMany({
+          where: {
+              businessId: businessData.id,
+              reservationYear:activeDateYear,
+              reservationMonth: activeDateMonth,
+          },
+         select: {
+          reservationStart: true,
+          reservationEnd: true,
+          duration: true
+         },
+      })
+
+      const daysToUTC = reservationForDay.map((item) => {
+          return {
+              duration: item.duration,
+              reservationStart : subHours(item.reservationStart, 2),
+              reservationEnd: subHours(item.reservationEnd, 2)
+          }
+      })
+
+      return reservationForDay
+  }catch(err){
+      console.log(err)
+  }
+}
+
+
+type AddNewReservationManuallyProps =  {
+  businessId?: string
+  servicesIds: string[]
+  reservationStart: Date 
+  reservationYear: number
+  reservationMonth: number
+  reservationEnd: Date
+  duration: number
+  charge: number
+  status: string
+  clientName: string
+  clientPhone: string
+  isAddedByBusiness: boolean
+}
+
+//FUNCTIO FOR ADDING RESERVATION MANUALLY
+export const addNewReservationManually = async (reservation:AddNewReservationManuallyProps) => {
+  try{
+      const businessData = await serviceAuth()
+
+      const newReservation = await prisma.reservation.create({
+          data: {
+            businessId: reservation.businessId ?? businessData.id,
+            reservationYear: reservation.reservationYear,
+            reservationMonth: reservation.reservationMonth + 1,
+            reservationStart: reservation.reservationStart,
+            reservationEnd:reservation.reservationEnd,
+            duration: reservation.duration,
+            charge: reservation.charge,
+            status: reservation.status,
+            clientName: reservation.clientName,
+            clientPhone: reservation.clientPhone,
+            isAddedByBusiness: reservation.isAddedByBusiness
+          }
+        });
+        
+        await Promise.all(
+          reservation.servicesIds.map((serviceId) =>
+            prisma.reservationServices.create({
+              data: {
+                reservationId: newReservation.id,
+                serviceId: serviceId
+              }
+            })
+          )
+        );
+
+      return newReservation
+  }catch(err){
+      console.log(err)
   }
 }

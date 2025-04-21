@@ -1,10 +1,6 @@
 import UserAppointmentList from '../../../components/user/user-appointment-list';
-import { userAuth} from './../actions'
 
 export default async function Appointments(){
-
-  const user = userAuth()
-  const id = (await user).id
 
   return (
     <div>
@@ -13,7 +9,7 @@ export default async function Appointments(){
         <h3 className="mt-[5px] p-0 text-sm font-light">Here you can see and manage all your appointments.</h3>
       </div>
 
-      <UserAppointmentList userId={id} />
+      <UserAppointmentList/>
     </div>
   )
 }

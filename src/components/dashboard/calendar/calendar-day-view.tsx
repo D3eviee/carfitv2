@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import CalendarWeekViewEvent from "./calendar-week-view-event";
 import { useBusinessSmallCallendarStore } from "@/lib/store";
+import CalendarDayViewEvent from "./calendar-day-view-event";
 
 export default function CalendarDayView() {
 
@@ -88,7 +89,7 @@ export default function CalendarDayView() {
                     <div key={i} className="border h-20"></div>
                   ))}
                   {data?.map((item, i)=>(
-                    isSameDay(activeDay, item.reservationStart) && <CalendarWeekViewEvent event={item} key={i}/>
+                    isSameDay(activeDay, item.reservationStart) && <CalendarDayViewEvent event={item} key={i}/>
                   ))}
               </div>
             </div>

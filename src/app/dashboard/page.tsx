@@ -86,7 +86,7 @@ export default function Dashboard() {
                 <h1 className="font-semibold text-[#111] text-md">Liczba wizyt</h1>
                 <div className="flex flex-row gap-2">
                   <h2 className="text-[#555] font-semibold text-2xl">Dzisiaj: </h2>
-                  <h2 className="text-[#555] font-normal text-2xl">{last7DaysStas![5].numberOfVisits} Wizyty</h2>
+                  <h2 className="text-[#555] font-normal text-2xl">{last7DaysStas?.[6].numberOfVisits} Wizyty</h2>
                 </div>
               </div>
               

@@ -30,11 +30,11 @@ export const SidebarNavigation = () => {
           <Wrench size={23} color="#FFFFFF"/>
         </div>
       </Link>
-      <Link href="/dashboard/analytics">
+      {/* <Link href="/dashboard/analytics">
         <div className={cn("w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] :bg-[#F25287]", activePath == "analytics" ? "bg-[#F25287] hover:bg-[#F25287]" : <></>)}>
           <ChartBar size={24} color="#FFFFFF"/>
         </div>
-      </Link>
+      </Link> */}
       
       <Link href="/dashboard/settings?tab=details">
       <div className={cn("w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] :bg-[#F25287]",  activePath == "settings" ? "bg-[#F25287] hover:bg-[#F25287]" : <></>)}>

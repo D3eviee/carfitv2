@@ -16,30 +16,44 @@ export const userAuth = async () => {
     }
 }
 
-export const getAllClientAppointments = async (id:string) => {
-    const appointments = await prisma.reservations.findMany({
+export const getClientAppointments = async () => {
+    const userData = await userAuth()
+    
+    return await prisma.reservation.findMany({
         where: {
-            clientId: id
+            clientId: userData.id
+        },
+        include: {
+            services: {
+                select: {
+                    serviceId: true
+                }
+            }
         }
     })
-    return appointments
 }
 
-export const getServiceName = async (serviceId: string) => {
-    const serviceName = await prisma.service.findUnique({
-        where: {
-            id: serviceId
-        },
-        select: {
-           name: true,
-           district: true,
-           town: true,
-           zipcode: true,
-           street: true
-        }
-    });
+//GETTING BUSINESS DATA FOR USER APPOINTMENT
+export const getAppointmentBusinessData = async (id: string) => {
+    try {
+        const businessData = await prisma.business.findFirst({
+            where: {
+                id: id
+            },
+            select: {
+                name: true,
+                phone: true,
+                image: true,
+                town: true,
+                district: true,
+                zipcode: true,
+                street: true,
+            }
+        })
 
-    return serviceName
-};
-
-
+        return businessData
+    }
+    catch (error) {
+        console.log("Error while trying to retreieve service data:", error)
+    }
+}

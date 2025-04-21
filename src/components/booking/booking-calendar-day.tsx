@@ -1,9 +1,8 @@
-import { useCalendarStore, useEventTimeStore } from "@/lib/store";
+import { useCalendarStore } from "@/lib/store";
 import { cn } from "@/utils"
 import { getDate, getMonth, getYear, isToday } from "date-fns"
 
 export const BookingCalendarDay = ({date}:{date:Date}) => {
-    const setActiveEventTime = useEventTimeStore(store => store.setActiveEventTime)
     const selecetedDate = useCalendarStore((store) => store.selectedDate)
     const todayDate = useCalendarStore((store) => store.todayDate)
     const setSelectedDate = useCalendarStore((store) => store.setSelectedDate)

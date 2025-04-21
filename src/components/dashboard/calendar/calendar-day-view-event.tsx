@@ -8,15 +8,13 @@ type CalendarWeekViewEventProps = {
   reservationStart: Date
   duration: number
   charge: number
-  clientName: string,
-  clientPhone: string,
   client: {
     name: string
     email: string
   }
 };
 
-export default function CalendarWeekViewEvent({event}:{event:CalendarWeekViewEventProps}) {
+export default function CalendarDayViewEvent({event}:{event:CalendarWeekViewEventProps}) {
   const startHour = getHours(event.reservationStart) - 6;
   const startMinutes = getMinutes(event.reservationStart);
   const blockHeight = Math.round(event.duration * 1.33);
@@ -35,27 +33,24 @@ export default function CalendarWeekViewEvent({event}:{event:CalendarWeekViewEve
         height: `${blockHeight}px`,
       }}
     >
-      <div className="h-full flex flex-col justify-between">
+      <div className="h-full flex flex-row justify-between">
         <div className="flex flex-col ">
-          <p className="font-medium text-xs">Wymiana opon</p>
+          <p className="font-medium text-xs">Wymaian opon</p>
           <p className="font-light text-xs">{`${appointmentStartHour}:${appointmentStartMinute} - ${appointmentFinishHour}:${appointmentFinishMinute}`}</p>
         </div>
-
-        {event.duration > 60 && 
-        <div className="flex flex-row gap-1">
+        <div className="flex flex-row  items-center gap-1 mr-2">
           <div>
           <Image
             src={client_profile_picture}
             alt="client picture"
-            className="rounded-full  h-[25px] w-[25px] mt-1"
+            className="rounded-full  h-[35px] w-[35px] mt-1"
           />
           </div>
           <div className="flex flex-col">
-            <p className="font-normal text-xs">{event.clientId ? event.client.name :  event.clientName}</p>
-            <p className="font-light text-xs">{event.clientPhone}</p>
+            <p className="font-normal text-xs">{event.client.name}</p>
+            <p className="font-light text-xs">514 048 221</p>
           </div>
         </div>
-        }
       </div>
     </div>
   );

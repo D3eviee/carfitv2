@@ -14,21 +14,23 @@ export default function Onboardoarding() {
   const [error, setError] = useState<string>('')
   const router = useRouter();
 
-  interface FormData  {
+  interface ClientOnboadringData  {
     name: string
     email: string
     password: string
+    phone: string
   }
 
-  const {register, handleSubmit} = useForm<FormData>({
+  const {register, handleSubmit} = useForm<ClientOnboadringData>({
     defaultValues: {
       name: '',
       email: '',
+      phone: '',
       password: ''
     }
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: ClientOnboadringData) => {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const userData = {...data, password:hashedPassword}
 
@@ -78,6 +80,15 @@ export default function Onboardoarding() {
               type="text"
               id="name"
               placeholder="Jacky Macky"
+              className="border-[0.5px] border-[#CCCCCC] w-full px-[7px] py-[5px] text-[#111] text-sm rounded-md mb-[15px] focus:outline-[#333333]"
+            />
+
+          <label htmlFor="phone" className="inline-block text-[#333] text-[14px] mb-[5px]">Phone</label>
+            <input
+              type="string"
+              {...register('phone')}
+              id="email"
+              placeholder="111111222"
               className="border-[0.5px] border-[#CCCCCC] w-full px-[7px] py-[5px] text-[#111] text-sm rounded-md mb-[15px] focus:outline-[#333333]"
             />
 

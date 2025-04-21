@@ -4,7 +4,7 @@ import {createSession} from "@/lib/session";
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, email, password } = await req.json();
+        const { name, phone,  email, password } = await req.json();
 
         // Check if user already exists
         const existingUser = await prisma.client.findUnique({
@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
             data: {
                 name,
                 email,
-                password,
+                phone,
+                password
             },
         })
 

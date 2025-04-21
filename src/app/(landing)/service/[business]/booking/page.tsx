@@ -53,7 +53,6 @@ export default function Booking() {
     return total
   }
 
-
   const calculateDuration = () => { 
     let duration = 0
     
@@ -98,25 +97,27 @@ export default function Booking() {
       }
     });
 
+    console.log(selectedServices)
+
     const data = {
       businessId: id,
       clientId:  (await userAuth()).id,
-      servicesId: selectedServices,
+      servicesIds: selectedServices,
       reservationYear: getYear(activeEventTime!),
-      reservationMonth: getMonth(activeEventTime!)+1,
+      reservationMonth: getMonth(activeEventTime!),
       reservationStart: activeEventTime,
       reservationEnd: addMinutes(activeEventTime!, appointmentDuration),
       duration: appointmentDuration,
       charge: appointmentCharge,
       status: "Zarezerwowana",
     }
-        
-        const result = await addNewReservation(data);
+
+        const result = await addNewReservation(data)
         return result  
 
       }catch(err){
-        console.error("Error in addReservation:", err);
-        throw err; // Umożliwia obsługę błędu w onError w `useMutation
+        console.error("Error in addReservation:", err)
+        throw err
       }
     }
   })
@@ -129,7 +130,6 @@ export default function Booking() {
       console.log(error)
     }
   }
-
 
   return (
     <div className="absolute w-full h-full top-0 bg-white">

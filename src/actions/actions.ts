@@ -6,7 +6,6 @@ import { OnboardingState } from "@/lib/store";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-import { subHours } from "date-fns";
 
 export const logout = async () => {
     const cookieSession = await cookies();
@@ -103,11 +102,13 @@ export const getServiceData = async (id: string) => {
     }
 }
 
-export const getWorkingTimeData = async (id: string) => {
+export const getWorkingTimeData = async (businessId: string) => {
     try {
+        const businessData = await serviceAuth()
+
         const serviceData = await prisma.workingDay.findMany({
             where: {
-                serviceId: id
+                serviceId: businessData.id || businessId
             },
             orderBy: {
                 dayOfWeek: "asc"
@@ -224,21 +225,28 @@ export const getServiceDataForBooking = async (id:string) => {
     return allServices
 }
 
-// type AddNewReservationProps =  {
-//     businessId: string
-//     clientId: string
-//     servicesIds: string[]
-//     reservationStart: Date 
-//     reservationEnd: Date
-//     duration: number
-//     charge: number
-// }
+type AddNewReservationProps =  {
+    businessId?: string
+    clientId: string
+    servicesIds: string[]
+    reservationStart: Date 
+    reservationYear: number
+    reservationMonth: number
+    reservationEnd: Date
+    duration: number
+    charge: number
+    status: string
+    clientName: string
+    clientPhone: string
+}
 
-export const addNewReservation = async (reservation) => {
+export const addNewReservation = async (reservation:AddNewReservationProps) => {
     try{
+        const businessData = await serviceAuth()
+
         const newReservation = await prisma.reservation.create({
             data: {
-              businessId: reservation.businessId,
+              businessId: reservation.businessId ?? businessData.id,
               clientId: reservation.clientId,
               reservationYear: reservation.reservationYear,
               reservationMonth: reservation.reservationMonth + 1,
@@ -247,12 +255,14 @@ export const addNewReservation = async (reservation) => {
               duration: reservation.duration,
               charge: reservation.charge,
               status: reservation.status,
+              clientName: reservation.clientName,
+              clientPhone: reservation.clientPhone,
+              
             }
           });
           
-
           await Promise.all(
-            reservation.servicesId.map((serviceId) =>
+            reservation.servicesIds.map((serviceId) =>
               prisma.reservationServices.create({
                 data: {
                   reservationId: newReservation.id,
@@ -263,38 +273,6 @@ export const addNewReservation = async (reservation) => {
           );
 
         return newReservation
-    }catch(err){
-        console.log(err)
-    }
-}
-
-export const reservationsForActiveMonth = async(activeDate:Date, businessId:string) => {
-    const activeDateYear = activeDate.getFullYear()
-    const activeDateMonth = activeDate.getMonth()+1
-
-    try{
-        const reservationForDay = prisma.reservation.findMany({
-            where: {
-                businessId: businessId,
-                reservationYear:activeDateYear,
-                reservationMonth: activeDateMonth,
-            },
-           select: {
-            reservationStart: true,
-            reservationEnd: true,
-            duration: true
-           },
-        })
-
-        const daysToUTC = (await reservationForDay).map((item) => {
-            return {
-                duration: item.duration,
-                reservationStart : subHours(item.reservationStart, 2),
-                reservationEnd: subHours(item.reservationEnd, 2)
-            }
-        })
-
-        return daysToUTC
     }catch(err){
         console.log(err)
     }
