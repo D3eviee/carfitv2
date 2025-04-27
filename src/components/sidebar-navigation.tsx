@@ -36,7 +36,7 @@ export const SidebarNavigation = () => {
         </div>
       </Link> */}
       
-      <Link href="/dashboard/settings?tab=details">
+      <Link href="/dashboard/settings">
       <div className={cn("w-[40px] h-[40px] flex justify-center items-center box-border rounded-[10px] hover:cursor-pointer hover:bg-[#323232] :bg-[#F25287]",  activePath == "settings" ? "bg-[#F25287] hover:bg-[#F25287]" : <></>)}>
         <Settings size={27} color="#FFFFFF"/>
         </div>

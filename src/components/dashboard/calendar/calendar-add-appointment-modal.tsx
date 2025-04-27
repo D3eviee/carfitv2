@@ -15,7 +15,7 @@ type ModalProps = {
 
 export default function CalendarAddApppointmentModal({open, onClose}:ModalProps) {
   //FORM STATE
-  const { register, handleSubmit, watch, setValue, getValues} = useForm({
+  const { register, handleSubmit, watch, getValues} = useForm({
     defaultValues: {
       category: "select",
       service: "select",

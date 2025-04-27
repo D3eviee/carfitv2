@@ -11,7 +11,10 @@ type CalendarWeekViewEventProps = {
   client: {
     name: string
     email: string
+    phone: string
   }
+  clientName: string,
+  clientPhone: string
 };
 
 export default function CalendarDayViewEvent({event}:{event:CalendarWeekViewEventProps}) {
@@ -47,8 +50,8 @@ export default function CalendarDayViewEvent({event}:{event:CalendarWeekViewEven
           />
           </div>
           <div className="flex flex-col">
-            <p className="font-normal text-xs">{event.client.name}</p>
-            <p className="font-light text-xs">514 048 221</p>
+            <p className="font-normal text-xs">{event.clientId ? event.client.name :  event.clientName}</p>
+            <p className="font-light text-xs">{event.clientId ? event.client.phone :  event.clientPhone}</p>
           </div>
         </div>
       </div>

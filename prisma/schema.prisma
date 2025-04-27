@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./node_modules/@prisma/client"
 }
 
 datasource db {
@@ -64,13 +65,15 @@ model Business {
 model WorkingDay {
   id        String   @id @default(uuid())
   dayOfWeek String
-  open      String?
-  close     String?
+  open      String
+  close     String
   isOpen    Boolean
   updatedAt DateTime @updatedAt
 
   serviceId String
   service   Business @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, dayOfWeek], name: "serviceId_dayOfWeek")
 }
 
 model Review {

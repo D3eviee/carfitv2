@@ -22,24 +22,18 @@ export default async function  Home() {
         <h1 className="w-full text-6xl font-semibold">keep your car fit</h1>
       </div>
 
-      <div className="py-2.5 px-3.5 mb-56 flex flex-row  border items-center border-[#333333] rounded-md gap-[15px]">
-        <div className="w-[250px] flex flex-row border-r-[0.5px] border-[#777777] gap-3 pr-1">
-          <Search strokeWidth={1.5}/>
-          <input type="text" placeholder="Type of service" className="w-[200px] outline-none"/>
+      <div className="py-2.5 px-3.5 mb-56 flex flex-row border border-[#333333] rounded-md gap-[15px]">
+        <div className="flex flex-row w-full">
+          <div className="flex flex-row pr-1 w-full">
+            <label htmlFor="service"><Search strokeWidth={1.5} className="pr-1"/></label>
+            <input type="text" id="service" placeholder="Type of service" className="outline-none w-full"/>
+          </div>
+          <div className="flex flex-row gap-3 w-full">
+            <label htmlFor="location"><MapPinned strokeWidth={1.5} className="pr-1"/></label>
+            <input type="text" id="location" placeholder="Location" className=" outline-none placeholder:text-red w-full"/>
+          </div>
         </div>
-        <div className="w-[250px] flex flex-row border-r-[0.5px] border-[#777777] gap-3">
-          <label htmlFor="location"><MapPinned strokeWidth={1.5}/></label>
-          <input type="text" id="location" placeholder="Location" className="w-[200px] outline-none placeholder:text-red"/>
-        </div>
-        <div className="w-[250px] flex flex-row border-r-[0.5px] border-[#777777] gap-3">
-          <CalendarDays strokeWidth={1.5}/>
-          <input type="text" placeholder="Date" className="w-[200px] outline-none"/>
-        </div>
-        <div className="w-[250px] flex flex-row border-r-[0.5px] border-[#777777] gap-3">
-          <Clock/>
-          <input type="text" placeholder="Time" className="w-[200px] outline-none"/>
-        </div>
-
+        
         <button className="h-7 font-semibold text-sm py-1 px-4 rounded-md bg-black text-white hover:bg-[#333333]">Search</button>
       </div>
 

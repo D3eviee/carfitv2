@@ -2,8 +2,15 @@
 import prisma from "@/lib/db"
 import { serviceAuth } from "@/lib/session";
 import { format, getDate, getMonth, getYear, isSameDay, set, subDays, subHours } from "date-fns";
+import { boolean } from "zod";
 
-export const getAppointmentsForWeekInterval = async (weekInterval) => {
+
+type  GetAppointmentsForMonthIntervalProps = {
+  monthInterval : Date[]
+}
+
+export const getAppointmentsForWeekInterval = async (weekInterval: Date[]) => {
+
     return await prisma.reservation.findMany({
       where: {
         reservationStart: {
@@ -22,14 +29,15 @@ export const getAppointmentsForWeekInterval = async (weekInterval) => {
         client:{
           select: {
             name:true,
-            email: true
+            email: true,
+            phone: true
           }
         }
       },
     });
 };
 
-export const getAppointmentsForMonthInterval = async (monthInterval) => {
+export const getAppointmentsForMonthInterval = async ({monthInterval}: GetAppointmentsForMonthIntervalProps ) => {
   return await prisma.reservation.findMany({
     where: {
       reservationStart: {
@@ -38,6 +46,8 @@ export const getAppointmentsForMonthInterval = async (monthInterval) => {
       },
     },    
     select: {
+      clientPhone: true, 
+      clientName: true,
       duration : true,
       reservationStart: true,
       charge: true,
@@ -479,3 +489,123 @@ export const addNewReservationManually = async (reservation:AddNewReservationMan
       console.log(err)
   }
 }
+
+
+export const getSettingsDataForBusiness = async () => {
+  try {
+    const business = await serviceAuth()
+
+    const serviceSettingsData = await prisma.business.findFirst({
+      where: {
+        id: business.id
+      },
+      select: {
+        email: true, 
+        image: true, 
+        description: true,
+        name: true, 
+        owner: true, 
+        password: true, 
+        phone: true, 
+        street: true, 
+        district: true,
+        town: true,
+        zipcode: true,
+      }
+    })
+    
+    return serviceSettingsData
+  } catch (error) {
+    console.log("Error occured" + error)
+  }
+}
+
+//FUNCTION FOR UPDATING SETTING IN DATABASE
+export const setSettingDataForBusiness = async (data:Record<string, string>) => {
+  try {
+    const business = await serviceAuth()
+
+    const setServiceSettingsData = await prisma.business.update({
+      where: {
+        id: business.id
+      },
+      data: {
+        ...data
+      }
+    })
+
+    return setServiceSettingsData
+  } catch (error) {
+    console.log("Error occured" + error)
+  }
+}
+
+//FUNCTION FOR UPDATING SETTING IN DATABASE
+export const getWorkingTimeData = async () => {
+  try {
+      const businessData = await serviceAuth()
+
+      const workingTimeData = await prisma.workingDay.findMany({
+          where: {
+              serviceId: businessData.id
+          }
+      })
+
+      const dayOrder = {
+        Monday: 1,
+        Tuesday: 2,
+        Wednesday: 3,
+        Thursday: 4,
+        Friday: 5,
+        Saturday: 6,
+        Sunday: 7
+      };
+
+      const sortedWeek = workingTimeData.sort(
+        (a, b) => dayOrder[a.dayOfWeek] - dayOrder[b.dayOfWeek]
+      );
+
+      return sortedWeek
+  }
+  catch (error) {
+      console.log("Error while trying to retreieve working time data:", error)
+  }
+}
+
+type SetWorkingTimeDataDaysDataProps =  {
+  id: string
+  isOpen: boolean
+  open: string
+  close: string
+  dayOfWeek: string
+}[]
+
+
+//FUNCTION FOR UPDATING WORKING DAYS
+export const setWorkingTimeData = async (daysData:SetWorkingTimeDataDaysDataProps) => {
+  try {
+    const businessData = await serviceAuth();
+
+    const updatePromises = daysData.map((dayData) => {
+      return prisma.workingDay.update({
+        where: {
+          serviceId_dayOfWeek: {
+            serviceId: businessData.id,
+            dayOfWeek: dayData.dayOfWeek
+          },
+        },
+        data: {
+          isOpen: dayData.isOpen,
+          open: dayData.open,
+          close: dayData.close,
+        }
+      });
+    });
+
+    const results = await Promise.all(updatePromises);
+    return results;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating working days");
+  }
+};

@@ -6,7 +6,7 @@ import { getAppointmentsTableData } from "../actions";
 import AppointmenDateCell from "@/components/dashboard/appointments/appointments-date-cell"
 import AppointmenPriceCell from "@/components/dashboard/appointments/appointments-price-cell"
 import AppointmentStatusCell from "@/components/dashboard/appointments/appointments-status-cell"
-import { ArrowDown, ArrowDownUp, ArrowUp, Filter, Search, SearchCheck, Trash, X, } from "lucide-react";
+import { ArrowDown, ArrowDownUp, ArrowUp, Filter, Search, X, } from "lucide-react";
 import { serviceAuth } from "@/lib/session";
 import { useState } from "react";
 

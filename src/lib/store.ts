@@ -38,17 +38,17 @@ interface WorkingDaysStore {
     updateIsOpen: (dayName: string, value: boolean) => void;
     updateOpenHour: (dayName: string, value: string) => void;
     updateCloseHour: (dayName: string, value: string) => void;
-  }
+}
 
 const useWorkingDays = create<WorkingDaysStore>()((set) => ({
     days: [
-      { isOpen: true, day: "Monday", open: "7:00", close: "18:00" },
-      { isOpen: true, day: "Tuesday", open: "7:00", close: "18:00" },
-      { isOpen: true, day: "Wednesday", open: "7:00", close: "18:00" },
-      { isOpen: true, day: "Thursday", open: "7:00", close: "18:00" },
-      { isOpen: true, day: "Friday", open: "7:00", close: "18:00" },
-      { isOpen: false, day: "Saturday", open: "7:00", close: "18:00" },
-      { isOpen: false, day: "Sunday", open: "7:00", close: "18:00" }
+      { isOpen: true, day: "Monday", open: "07:00", close: "18:00" },
+      { isOpen: true, day: "Tuesday", open: "07:00", close: "18:00" },
+      { isOpen: true, day: "Wednesday", open: "07:00", close: "18:00" },
+      { isOpen: true, day: "Thursday", open: "07:00", close: "18:00" },
+      { isOpen: true, day: "Friday", open: "07:00", close: "18:00" },
+      { isOpen: false, day: "Saturday", open: "07:00", close: "18:00" },
+      { isOpen: false, day: "Sunday", open: "07:00", close: "18:00" }
     ],
   
     updateIsOpen: (dayName, value) =>
@@ -56,7 +56,7 @@ const useWorkingDays = create<WorkingDaysStore>()((set) => ({
         days: state.days.map((day) =>
           day.day === dayName ? {...day, isOpen: value} : day
         ),
-      })),
+    })),
 
     updateOpenHour: (dayName, value) =>
         set((state) => ({
@@ -161,4 +161,48 @@ type BusinessSmallCallendarStore = {
 export const useBusinessSmallCallendarStore = create<BusinessSmallCallendarStore>((set) => ({
   activeDay: new Date(),
   setActiveDay : (day) => set(()=>({activeDay : day})),
+}));
+
+type EditDay = {
+  isOpen: boolean
+  open: string
+  close: string
+  id: string
+  updatedAt: Date
+  serviceId: string
+  dayOfWeek: string
+}
+interface UseSettingsEditingWorkingHoursStore {
+  days: EditDay[];
+  setInDays: (days: EditDay[]) => void
+  updateIsOpen: (dayName: string, value: boolean) => void;
+  updateOpenHour: (dayName: string, value: string) => void;
+  updateCloseHour: (dayName: string, value: string) => void;
+}
+
+export const useSettingsEditingWorkingHours = create<UseSettingsEditingWorkingHoursStore>()((set) => ({
+  days: [],
+
+  setInDays: (days) => set(() => ({ days })),
+
+  updateIsOpen: (dayName, value) =>
+    set((state) => ({
+      days: state.days.map((day) =>
+        day.dayOfWeek === dayName ? {...day, isOpen: value} : day
+      ),
+  })),
+
+  updateOpenHour: (dayName, value) =>
+      set((state) => ({
+        days: state.days.map((day) =>
+          day.dayOfWeek === dayName ? {...day, open: value} : day
+        ),
+  })),
+
+  updateCloseHour: (dayName, value) =>
+      set((state) => ({
+        days: state.days.map((day) =>
+          day.dayOfWeek === dayName ? {...day, close: value} : day
+        ),
+  })),
 }));

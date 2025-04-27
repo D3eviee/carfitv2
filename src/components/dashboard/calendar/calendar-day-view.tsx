@@ -2,26 +2,25 @@
 import {addDays, eachDayOfInterval, eachHourOfInterval, format,isSameDay,lastDayOfISOWeek,set, startOfISOWeek, subDays } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { getAppointmentsForWeekInterval } from "@/app/dashboard/actions";
-import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import CalendarWeekViewEvent from "./calendar-week-view-event";
 import { useBusinessSmallCallendarStore } from "@/lib/store";
 import CalendarDayViewEvent from "./calendar-day-view-event";
 
 export default function CalendarDayView() {
 
   const activeDay = useBusinessSmallCallendarStore(store => store.activeDay)
+
   const setActiveDay = useBusinessSmallCallendarStore(store => store.setActiveDay)
 
-  const [currentDay, setCurrentDay] = useState(eachDayOfInterval({
+  const currentWeekInterval: Date[] = eachDayOfInterval({
     start: startOfISOWeek(activeDay),
     end: lastDayOfISOWeek(activeDay),
-  }))
+  })
 
   const { data } = useQuery({
-    queryKey:['getAppointments', currentDay],
+    queryKey:['getAppointments', currentWeekInterval],
     queryFn: async () => {
-      return await getAppointmentsForWeekInterval(currentDay);
+      return await getAppointmentsForWeekInterval(currentWeekInterval);
     }
   })
 
