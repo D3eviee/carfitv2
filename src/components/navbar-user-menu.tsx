@@ -3,6 +3,7 @@ import profile_picture from '../../public/profile_picture.jpeg';
 import Link from "next/link";
 import { Book, Headset, LogOut, User } from "lucide-react";
 import { logout } from "@/actions/actions";
+
 export default function NavbarUserMenu({name, email}:{name:string, email:string, userImage:string}) {
   
     return (
@@ -18,7 +19,7 @@ export default function NavbarUserMenu({name, email}:{name:string, email:string,
         <NavbarUserMenuOption title="Appointments" icon={<Book color="#555" strokeWidth="1.5px" size={16}/>} link="/user/appointments"/>
         <hr className="bg-[#E8E8E8] border-0 h-[1px] m-0 mb-[5px]"/>
 
-        <NavbarUserMenuOption title="Account settings" icon={<User color="#555" strokeWidth="1.5px" size={16}/>} link="/user/profile"/>
+        <NavbarUserMenuOption title="Profile" icon={<User color="#555" strokeWidth="1.5px" size={16}/>} link="/user/profile"/>
         {/* <NavbarUserMenuOption title="Payments" icon={<CircleDollarSign color="#555" strokeWidth="1.5px" size={16}/>} link="/profile"/>
         <hr className="bg-[#E8E8E8] border-0 h-[1px] m-0 mb-[5px]"/> */}
 

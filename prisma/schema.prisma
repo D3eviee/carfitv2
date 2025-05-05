@@ -20,15 +20,15 @@ enum DurationType {
 }
 
 model Client {
-  id          String        @id @default(uuid())
-  name        String
-  email       String        @unique
-  phone       String        @unique 
-  password    String
-  image       String?
-  provider    String? // "credentials" lub "google"
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?     @updatedAt
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  phone     String    @unique
+  password  String
+  image     String?
+  provider  String?   @default("Email")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 
   Reservation Reservation[]
 
@@ -44,7 +44,7 @@ model Business {
   owner       String
   category    String
   image       String?
-  provider    String? // "credentials" lub "google"
+  provider    String?  @default("Email")
   town        String
   zipcode     String
   district    String
@@ -58,7 +58,7 @@ model Business {
   categories  Categories[]
 
   reservations Reservation[]
-  
+
   reviews Review[]
 }
 
@@ -82,12 +82,11 @@ model Review {
   rate      Int
   createdAt DateTime @default(now())
 
-  service   Business  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service   Business @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceId String
-  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId  String
 }
-
 
 model Service {
   id           String @id @default(uuid())
@@ -104,7 +103,7 @@ model Service {
 
   categoryId String
   category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  
+
   reservations ReservationServices[]
 }
 
@@ -121,31 +120,31 @@ model Categories {
 }
 
 model Reservation {
-  id               Int       @id @default(autoincrement())
-  businessId       String
-  reservationYear  Int
-  reservationMonth Int
-  reservationStart DateTime
-  reservationEnd   DateTime
-  duration         Int
-  charge           Float
-  status           String
-  clientName       String? 
-  clientPhone      String? 
-  isAddedByBusiness Boolean @default(false)
+  id                Int      @id @default(autoincrement())
+  businessId        String
+  reservationYear   Int
+  reservationMonth  Int
+  reservationStart  DateTime
+  reservationEnd    DateTime
+  duration          Int
+  charge            Float
+  status            String
+  clientName        String?
+  clientPhone       String?
+  isAddedByBusiness Boolean  @default(false)
 
   clientId String?
   client   Client?  @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   services ReservationServices[]
 }
 
 model ReservationServices {
-  reservation    Reservation   @relation(fields: [reservationId], references: [id], onDelete: Cascade)
-  reservationId  Int
-  service  Service @relation(fields: [serviceId], references: [id])
-  serviceId      String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  reservationId Int
+  service       Service     @relation(fields: [serviceId], references: [id])
+  serviceId     String
 
   @@id([reservationId, serviceId])
 }

@@ -5,7 +5,7 @@ import { cn } from "@/utils";
 import { ArrowLeft } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getWorkingTimeData, setWorkingTimeData } from '../../actions';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SettingsBusinessWorkHours from '@/components/dashboard/settings/settings-business-work-hours';
 import SettingsBusinessWorkHoursEdit from '@/components/dashboard/settings/settings-business-work-hours-edit';
 import { useSettingsEditingWorkingHours } from '@/lib/store';

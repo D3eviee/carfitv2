@@ -16,7 +16,7 @@ type WorkingHour = {
 
 export default function SettingsBusinessWorkHours({workingHoursData}:SettingsBusinessWorkHoursProps){
   return (
-    <div className="flex flex-col gap-2 w-[340px]">
+    <div className="flex flex-col gap-2 w-full">
         {workingHoursData.map((day, _)=> (
             <SettingsBusinessWorkHoursItem key={day.dayOfWeek} day={day} />
         ))}

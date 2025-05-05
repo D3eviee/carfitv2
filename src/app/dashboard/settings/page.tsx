@@ -15,8 +15,17 @@ export default function SettingsPage() {
           title="Inormacje o biznesie" 
           description="Przeglądaj i edytuj szczegóły dotyczące swojej firmy, zarządzaj lokalizacjami, źródłem klientów i udostępniaj linki do mediów społecznościowych"
           redirect="business" 
-          />
-        <SettingGridItem title="Dni pracy" description="Zarządzaj dniami i godzinami, w które twój serwis jest otwarty" redirect="working-days"/>
+        />
+        <SettingGridItem 
+          title="Dni pracy" 
+          description="Zarządzaj dniami i godzinami, w które twój serwis jest otwarty" 
+          redirect="working-days"
+        />
+        <SettingGridItem 
+          title="Galleria" 
+          description="Dodawaj i zmieniaj zdjęcia widoczne na stronie twojego serwisu." 
+          redirect="gallery"
+        />
         </div>
       </DashboardContentContainer>
   );

@@ -1,5 +1,5 @@
 'use client'
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import SettingEditableField from "./settings-editable-field";
 import { setSettingDataForBusiness } from "@/app/dashboard/actions";
 
@@ -10,10 +10,15 @@ type SettingsBusinessSocialsViewProps = {
 }
 
 export function SettingsBusinessSocialsView({settings}:{settings: SettingsBusinessSocialsViewProps}){
+    const queryClient = useQueryClient()
+
     const {mutate} = useMutation<unknown, unknown, Record<string, string>>({
         mutationKey: ["changeSetting"],
         mutationFn: async (data) => {   
             return await setSettingDataForBusiness(data)
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['getWorkingTimeData'] })
         }
       })
 

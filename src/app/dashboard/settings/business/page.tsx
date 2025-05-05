@@ -8,11 +8,9 @@ import { getSettingsDataForBusiness } from '../../actions';
 import { SettingsBusinessDetailsView } from '@/components/dashboard/settings/settings-business-details-view';
 import { SettingsBusinessLocationView } from '@/components/dashboard/settings/settings-business-location-view';
 import { SettingsBusinessSocialsView } from '@/components/dashboard/settings/settings-business-socials-view';
-import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 export default function SettingsPage() {
-  
   const [openView, setOpenView] = useState<string>("details")
 
   const {data: settings, status: settingsStatus} = useQuery({

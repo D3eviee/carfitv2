@@ -18,7 +18,7 @@ export const userAuth = async () => {
 
 export const getClientAppointments = async () => {
     const userData = await userAuth()
-    
+
     return await prisma.reservation.findMany({
         where: {
             clientId: userData.id
@@ -55,5 +55,50 @@ export const getAppointmentBusinessData = async (id: string) => {
     }
     catch (error) {
         console.log("Error while trying to retreieve service data:", error)
+    }
+}
+
+
+//function for getting user profile information 
+export const getUserProfileData = async () => {
+    const userId = await userAuth()
+
+    try {
+        const userData = await prisma.client.findUnique({
+            where: {
+                id: userId.id
+            },
+            select: {
+                id: true,
+                email: true,
+                image: true,
+                name: true,
+                phone: true,
+            }
+        })
+
+        return userData
+    } catch (error) {
+        return error
+    }
+}
+
+export const updateUserData = async (data) => {
+    const userId = await userAuth()
+
+    try {
+        const userData = await prisma.client.update({
+            where: {
+                id: userId.id
+            },
+            data: {
+                name: data.name,
+                phone: data.phone,
+            }
+        })
+
+        return userData
+    } catch (error) {
+        return error
     }
 }

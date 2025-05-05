@@ -207,7 +207,7 @@ export const getAllServicesForBusiness = async (id:string) => {
         }
     })
 
-    const services = await prisma.singleService.findMany({
+    const services = await prisma.service.findMany({
         where: {
             serviceId: id
         },
@@ -217,7 +217,7 @@ export const getAllServicesForBusiness = async (id:string) => {
 
 
 export const getServiceDataForBooking = async (id:string) => {
-    const allServices = await prisma.singleService.findMany({
+    const allServices = await prisma.service.findMany({
         where: {
             serviceId: id
         },
@@ -276,4 +276,19 @@ export const addNewReservation = async (reservation:AddNewReservationProps) => {
     }catch(err){
         console.log(err)
     }
+}
+
+export const putProfileImageToDatabase = async (userId:string, imageKey:string) => {
+    const s3Link = `https://carfitapp.s3.eu-north-1.amazonaws.com/${imageKey}`
+
+    const putImage  = await prisma.client.update({
+        where: {
+            id: userId
+        },
+        data: {
+            image: s3Link
+        }
+    })
+    
+    return putImage
 }
