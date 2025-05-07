@@ -8,7 +8,7 @@ import prisma from "@/lib/db";
 
 export const logout = async () => {
     const cookieSession = await cookies();
-    const token = cookieSession.delete('ClientToken')
+    cookieSession.delete('ClientToken')
     redirect('/')
 }
 
@@ -24,7 +24,7 @@ export const checkIfEmailExists = async (email: string) => {
         }
 
         return { isEmailAvalable: true, message: "Email available" }
-    } catch (error) {
+    } catch {
         return { isEmailAvalable: false, message: "Error while processing email!" }
     }
 }
@@ -51,7 +51,7 @@ export const createService = async (data: OnboardingState, workingDays: WorkingD
 
         //create new service and add to database
         if (service) {
-            const days = await Promise.all(
+            await Promise.all(
                 workingDays.map((day: WorkingDay) =>
                     prisma.workingDay.create({
                         data: {
