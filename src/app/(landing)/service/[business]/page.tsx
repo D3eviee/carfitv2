@@ -24,6 +24,8 @@ export default async function BusinessPage({ params }: { params: {business: stri
     (a, b) => dniKolejnosc.indexOf(a.dayOfWeek) - dniKolejnosc.indexOf(b.dayOfWeek)
   );
   
+  const galleryImages = serviceData.images
+
   return (
     <div className="mt-[52px] box-border mx-[236px]">
       {/*PAGE TITLE SECION*/}
@@ -32,7 +34,7 @@ export default async function BusinessPage({ params }: { params: {business: stri
         <ServicePageTitle data={serviceData} workingTime={workingTimeData} reviews={serviceReviews}/>
         
         {/*SERVICE GALLERY*/}
-        <ServicePageGallery/>
+        <ServicePageGallery images={galleryImages}/>
 
         {/*BOTTOM SECTION*/}
 

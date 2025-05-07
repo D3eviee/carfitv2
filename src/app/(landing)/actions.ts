@@ -1,6 +1,5 @@
 'use server'
 import prisma from "@/lib/db"
-import { subHours } from "date-fns"
 
 export const getActiveMonthAppointments = async(activeDate:Date, businessId:string) => {
     const activeDateYear = activeDate.getFullYear()
@@ -19,17 +18,67 @@ export const getActiveMonthAppointments = async(activeDate:Date, businessId:stri
             duration: true
            },
         })
-
-        const daysToUTC = reservationForDay.map((item) => {
-            return {
-                duration: item.duration,
-                reservationStart : subHours(item.reservationStart, 2),
-                reservationEnd: subHours(item.reservationEnd, 2)
-            }
-        })
-
         return reservationForDay
     }catch(err){
         console.log(err)
+    }
+}
+
+// function for requesting search results 
+export const getSearchedBusinesses = async (town:string) =>{
+    try {
+        const searchedBusinesses = prisma.service.findMany({
+            where:{
+                town: town
+            },
+            select:{
+                id: true,
+                name: true,
+                image: true,
+                category: true,
+                town: true,
+                district: true,
+                street: true,
+                zipcode: true,  
+                reviews:{
+                    select: {
+                        rate: true
+                    },
+                }
+            }
+        })
+        return searchedBusinesses
+    } catch (error) {
+        return {error}
+    }
+}
+
+// function for getting recomeneded services on landing page
+export const getRecommendedServices = async () => {
+    try {
+        const recommended = await prisma.business.findMany({ 
+            take: 5,
+            select:{
+                id: true,
+                name: true,
+                image: true,
+                category: true,
+                town: true,
+                district: true,
+                street: true,
+                zipcode: true,  
+                reviews:{
+                    select: {
+                        rate: true
+                    },
+                }
+            }
+        })
+
+        if(!recommended) return  {error: "There was a problem with fatching your data!"}
+        return recommended
+    } catch (error) {
+        console.error("Error fetching recommended services:", error);
+        return {error: error}
     }
 }

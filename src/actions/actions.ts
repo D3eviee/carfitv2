@@ -1,11 +1,10 @@
 'use server'
-import prisma from "@/lib/db";
-
 import { createServiceSession, serviceAuth } from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
+import prisma from "@/lib/db";
 
 export const logout = async () => {
     const cookieSession = await cookies();
@@ -16,7 +15,7 @@ export const logout = async () => {
 export const checkIfEmailExists = async (email: string) => {
     try {
         // Check if user already exists
-        const existingUser = await prisma.business.findUnique({
+        const existingUser = await prisma.user.findUnique({
             where: { email },
         });
 
@@ -35,7 +34,7 @@ export const createService = async (data: OnboardingState, workingDays: WorkingD
 
     try {
         //create new service and add to database
-        const service = await prisma.business.create({
+        const service = await prisma.service.create({
             data: {
                 email: email!,
                 password: password!,
@@ -91,6 +90,12 @@ export const getServiceData = async (id: string) => {
                         name: true,
                         services: true
                     }
+                },
+                images :{
+                    select: {
+                        id: true,
+                        photoUrl: true
+                    }
                 }
             }
         })
@@ -137,17 +142,6 @@ export const getServiceReviews = async (id: string) => {
     }
     catch (error) {
         console.log("Error while trying to retreieve reviews", error)
-    }
-}
-
-export const getRecommendedServices = async () => {
-    try {
-        const recommended = await prisma.business.findMany({ take: 5 });
-        return recommended
-
-    } catch (error) {
-        console.error("Error fetching recommended services:", error);
-        return;
     }
 }
 
@@ -287,6 +281,19 @@ export const putProfileImageToDatabase = async (userId:string, imageKey:string) 
         },
         data: {
             image: s3Link
+        }
+    })
+    
+    return putImage
+}
+
+export const putBusinessImageToGallery = async (serviceId:string, imageKey:string) => {
+    const s3Link = `https://carfitapp.s3.eu-north-1.amazonaws.com/${imageKey}`
+
+    const putImage  = await prisma.image.create({
+        data: {
+            businessId: serviceId,
+            photoUrl: s3Link
         }
     })
     

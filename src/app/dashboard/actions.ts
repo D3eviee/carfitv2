@@ -30,7 +30,8 @@ export const getAppointmentsForWeekInterval = async (weekInterval: Date[]) => {
           select: {
             name:true,
             email: true,
-            phone: true
+            phone: true,
+            image: true
           }
         }
       },
@@ -56,7 +57,8 @@ export const getAppointmentsForMonthInterval = async ({monthInterval}: GetAppoin
       client:{
         select: {
           name:true,
-          email: true
+          email: true,
+          image: true
         }
       }
     }
@@ -609,3 +611,20 @@ export const setWorkingTimeData = async (daysData:SetWorkingTimeDataDaysDataProp
     throw new Error("Error updating working days");
   }
 };
+
+// getting user images on gallery page
+export const getBusinessImages = async () => {
+  const businessData = await serviceAuth()
+
+  try {
+      const businessImages = await prisma.image.findMany({
+          where: {
+              businessId: businessData.id
+          }
+      })
+
+      return businessImages
+  } catch (error) {
+      return error
+  }
+}

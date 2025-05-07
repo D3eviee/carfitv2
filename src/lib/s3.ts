@@ -33,32 +33,22 @@ export const uploadToS3 = async ({file, userId}:{file: any, userId: string}) => 
     }
 }
 
+export const uploadToGalleryS3 = async ({file, businessId}:{file: any, businessId: string}) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-const getImageKeysByUser = async (userId:string) => {
-    const command = new ListObjectsV2Command({
-        Bucket: BUCKET,
-        Prefix: userId
+    const key = `BusinessGallery/${businessId}/${uuid()}`
+    const command = new PutObjectCommand({
+        Bucket: BUCKET, 
+        Key: key, 
+        Body: buffer,
+        ContentType: file.type,
     })
 
-    const {Contents=[]}  = await s3.send(command)
-
-    return Contents.sort((a, b) => new Date(b.LastModified) - new Date(a.LastModified)).map(image => image.Key)
-}
-
-
-export const getUserPresignedUrls = async (userId:string) => {
     try {
-       const imageKeys =  await getImageKeysByUser(userId)
-       
-       const presignedUrls = await Promise.all(
-        imageKeys.map(key => {
-            const command = new GetObjectCommand({ Bucket: BUCKET, Key: key})
-            return getSignedUrl(s3, command, {expiresIn: 900})
-        })
-       )  
-       
-       return {presignedUrls}
-    } catch (error) {
+        await s3.send(command)
+        return {key}
+    }catch(error) {
         console.log(error)
         return {error}
     }

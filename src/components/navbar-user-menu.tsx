@@ -20,11 +20,8 @@ export default function NavbarUserMenu({name, email}:{name:string, email:string,
         <hr className="bg-[#E8E8E8] border-0 h-[1px] m-0 mb-[5px]"/>
 
         <NavbarUserMenuOption title="Profile" icon={<User color="#555" strokeWidth="1.5px" size={16}/>} link="/user/profile"/>
-        {/* <NavbarUserMenuOption title="Payments" icon={<CircleDollarSign color="#555" strokeWidth="1.5px" size={16}/>} link="/profile"/>
-        <hr className="bg-[#E8E8E8] border-0 h-[1px] m-0 mb-[5px]"/> */}
-
-        {/* <NavbarUserMenuOption title="Settings" icon={<Settings color="#555" strokeWidth="1.5px" size={16}/>} link="/profile"/> */}
-        <NavbarUserMenuOption title="Support" icon={<Headset color="#555" strokeWidth="1.5px" size={16}/>} link="/profile"/>
+        
+        <NavbarUserMenuOption title="Support" icon={<Headset color="#555" strokeWidth="1.5px" size={16}/>} link="/support"/>
         <hr className="bg-[#E8E8E8] border-0 h-[1px] m-0 mb-[5px]"/>
 
         <div className="flex items-center box-border px-[10px] py-[5px] rounded-[5px] mb-[5px] hover:cursor-pointer hover:bg-[#EEEEEE]" onClick={logout}>

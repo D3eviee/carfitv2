@@ -1,7 +1,7 @@
 'use client'
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { getUserProfileData, putUserImage, updateUserData } from "../actions";
+import { getUserProfileData, updateUserData } from "../actions";
 import { Mail } from "lucide-react";
 import { Phone } from "lucide-react";
 import ModalProvider from "@/components/providers/modal-provider"
@@ -9,7 +9,6 @@ import { useState } from "react"
 import { FormLabel } from "@/components/form-label";
 import { FormInput } from "@/components/form-input";
 import { useForm } from "react-hook-form";
-
 
 export default function Profile(){
   const queryClient = useQueryClient()
@@ -69,6 +68,8 @@ export default function Profile(){
     if(userProfileDataStatus == "pending") return <p>Pending</p>
     if(userProfileDataStatus == "error") return <p>Error</p>
 
+    const userVisits = userProfileData.Reservation.length
+    const userSpendings = userVisits ? (userProfileData.Reservation.reduce((sum, item) => sum + item.charge, 0)) : 0
 
   return (
     <div className='flex flex-col gap-5 justify-center w-3/4 mx-auto'>
@@ -104,11 +105,11 @@ export default function Profile(){
       <div className="flex flex-row cols-2 gap-5">
        <div className="w-full border p-3 rounded">
         <h1 className="text-md text-[#333] font-normal">Wizyty</h1>
-        <h2 className="text-3xl text-[#333] font-semibold">0</h2>
+        <h2 className="text-3xl text-[#333] font-semibold">{userVisits}</h2>
        </div>
        <div className="w-full border p-3 rounded">
         <h1 className="text-md text-[#333] font-normal">Wydane środki</h1>
-        <h2 className="text-3xl text-[#333] font-semibold">0 PLN</h2>
+        <h2 className="text-3xl text-[#333] font-semibold">{`${userSpendings} PLN`}</h2>
        </div>
        
       </div>

@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./node_modules/@prisma/client"
+  // output   = "./node_modules/@prisma/client"
 }
 
 datasource db {
@@ -60,6 +60,17 @@ model Business {
   reservations Reservation[]
 
   reviews Review[]
+
+  images Image[]
+}
+
+model Image {
+  id        String   @id @default(uuid())
+  photoUrl String 
+  priority Int?
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 }
 
 model WorkingDay {

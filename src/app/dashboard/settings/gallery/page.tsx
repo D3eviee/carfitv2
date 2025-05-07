@@ -4,41 +4,57 @@ import DashboardContentContainer from '@/components/dashboard/dashboard-content-
 import { cn } from "@/utils";
 import { ArrowLeft } from "lucide-react";
 import { useState } from 'react';
-import useMutation from '@/hooks/useMutation';
-import useQuery from '@/hooks/useQuery';
 import Image from 'next/image';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getBusinessImages } from '../../actions';
 
 export default function SettingsPage() {
-  const [refetch, setRefetch] = useState(0)
-
-  const {
-    mutate: uploadImage, 
-    isLoading:uploading, 
-    error:uploadError
-  } = useMutation({url: "/api/uploadImage"})
-
+  const queryClient = useQueryClient()
   const validFileTypes = ["image/jpg", "image/jpeg", "image/png"]
   const [error, setError] = useState("")
+
+  const {data: userImages, status: userImagesStatus} = useQuery({
+    queryKey: ["getUserImages"],
+    queryFn: async () => {
+      return await getBusinessImages()
+    }
+  })
+
+  console.log(userImages)
+
+  const {mutate, error:mutationError, isPending} = useMutation({
+    mutationKey: ["uploadGalleryImage"],
+    mutationFn: async (data:FormData) => {
+      try {
+        await fetch("/api/uploadGalleryImage", {
+            method: "POST",
+            body: data
+        })
+
+        return 
+      } catch (err) {
+          return { err }
+      }
+    },
+    onSuccess: () => queryClient.invalidateQueries({queryKey: ["getUserImages"]})
+  })
 
   const handleUpload = async (e) => {
     const file = e.target.files[0]
 
-    if(!validFileTypes.find(type => type === file.type)){
-      setError("FIle must be JPG/PNG format")
+    if (!validFileTypes.includes(file.type)) {
+      setError("File must be JPG/PNG format")
+      return
     }
 
     const form = new FormData()
     form.append('image', file)
 
-    await uploadImage(form)
-
-    setTimeout(() => {
-      setRefetch(s => s+1)
-    }, 1000)
+    mutate(form)
   }
 
-
-  const {data: imageUrls=[] ,isLoading:imagesLoading ,error: imagesError} = useQuery("/api/uploadImage", refetch)
+  if(userImagesStatus == "pending") return <p>Pending</p>
+  if(userImagesStatus == "error") return <p>Error</p>
 
   return (
     <DashboardContentContainer>
@@ -63,7 +79,7 @@ export default function SettingsPage() {
             </p>
           </div>
         </div>
-        <div className="flex flex-col gap-[20px] w-7/1">
+        <div className="flex flex-col gap-[20px] w-7/1 min-w-[550px]">
           <div className="p-[20px] border-[0.5px] border-[#D4D4D4] rounded-[5px]">
             <h2 className="m-0 p-0 mb-[5px] text-lg font-medium text-[#333333]">Galeria</h2>
             <p className="m-0 p-0 text-[13px] font-light text-[#777777]">Edytuj i zmieniaj zdjęcia widoczne na twoim profilu</p>
@@ -79,12 +95,22 @@ export default function SettingsPage() {
             <input id="imageInput" type="file" name="imageInput" hidden onChange={handleUpload}/>   
 
             {error && <p className="mt-5 text-red-600 text-sm font-extralight">{error}</p>}
-            {uploadError && <p className="mt-5 text-red-600 text-sm font-extralight">{uploadError}</p>}
-          </div>
+            {userImages.length == 0 && <p>No images added. Add some photos.</p>}
 
-          {imagesError && <p className="mt-5 text-red-600 text-sm font-extralight">{imagesError}</p>}
-          
-          {(imageUrls && imageUrls.length > 0) && imageUrls.map(url => <Image src={url} key={url} alt="image" width={250} height={250}/>)}
+            <div className='mt-7 flex flex-col gap-4'>
+              {(userImages && userImages.length > 0) && userImages.map(photo => (
+                <div key={photo.id} className='w-full flex flex-row justify-between items-center'>
+                  <div className='w-[180px] h-[120px] rounded overflow-hidden'>
+                    <Image src={photo.photoUrl} key={photo.photoUrl} alt="image" width={250} height={250}/>
+                  </div>
+
+                  <button className='h-fit bg-red-600 text-white px-2 py-1 rounded shadow-black'>
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </DashboardContentContainer>

@@ -1,4 +1,3 @@
-import client_profile_picture from "@/../public/client_profile_picture.jpg";
 import { addMinutes, format, getHours, getMinutes } from "date-fns";
 import Image from "next/image";
 
@@ -13,14 +12,15 @@ type CalendarWeekViewEventProps = {
   client: {
     name: string
     email: string
+    image: string
   }
 };
 
 export default function CalendarWeekViewEvent({event}:{event:CalendarWeekViewEventProps}) {
   const startHour = getHours(event.reservationStart) - 6;
   const startMinutes = getMinutes(event.reservationStart);
-  const blockHeight = Math.round(event.duration * 1.33);
-  const top = (startHour * 80 + startMinutes * 1.33)
+  const blockHeight = Math.round(event.duration * 1.25);
+  const top = (startHour * 80 + startMinutes * 1.33)+5
 
   const appointmentStartHour = format(event.reservationStart, "H")
   const appointmentStartMinute = format(event.reservationStart, "mm")
@@ -29,7 +29,7 @@ export default function CalendarWeekViewEvent({event}:{event:CalendarWeekViewEve
 
   return (
     <div
-      className="absolute left-1/2 -translate-x-1/2 trans w-[98%] bg-[#9088D4] text-white text-sm  rounded-md p-2"
+      className="absolute left-1/2 -translate-x-1/2 trans w-[92%] bg-[#9088D4] text-white text-sm  rounded-md p-2"
       style={{
         top: `${top}px`,
         height: `${blockHeight}px`,
@@ -45,7 +45,9 @@ export default function CalendarWeekViewEvent({event}:{event:CalendarWeekViewEve
         <div className="flex flex-row gap-1">
           <div>
           <Image
-            src={client_profile_picture}
+            src={event.client.image}
+            width={100}
+            height={100}
             alt="client picture"
             className="rounded-full  h-[25px] w-[25px] mt-1"
           />

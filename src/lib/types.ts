@@ -25,3 +25,16 @@ type CategoriesData = {
   id: string
   name: string
 }
+
+//type for business cards on landing and search page
+type BusinessCardProps = {
+  id: string
+  name: string
+  image: string
+  category: string
+  town:string
+  district: string
+  street: string
+  zipcode: string
+  reviews: { rate: number}[]
+}

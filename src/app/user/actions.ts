@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import jwt from 'jsonwebtoken';
 import prisma from "@/lib/db";
+import { serviceAuth } from "@/lib/session";
 
 export const userAuth = async () => {
     const cookieSession = await cookies();
@@ -74,9 +75,14 @@ export const getUserProfileData = async () => {
                 image: true,
                 name: true,
                 phone: true,
+                Reservation:{
+                    select: {
+                        charge: true
+                    }
+                }
             }
         })
-
+        
         return userData
     } catch (error) {
         return error

@@ -22,7 +22,7 @@ export default function SettingsPage() {
           redirect="working-days"
         />
         <SettingGridItem 
-          title="Galleria" 
+          title="Galeria" 
           description="Dodawaj i zmieniaj zdjęcia widoczne na stronie twojego serwisu." 
           redirect="gallery"
         />
