@@ -1,10 +1,8 @@
 'use server'
 import { createServiceSession} from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-
 import { authRole, businessAuth } from "@/lib/auth";
 import prisma from "@/lib/db";
 
@@ -77,7 +75,7 @@ export const createService = async (data: OnboardingState, workingDays: WorkingD
 
     try {
         //create new service and add to database
-        const service = await prisma.service.create({
+        const service = await prisma.business.create({
             data: {
                 email: email!,
                 password: password!,

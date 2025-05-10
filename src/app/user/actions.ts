@@ -1,10 +1,12 @@
 'use server'
-import { userAuth } from "@/data/user/user-auth";
+import { userAuth } from "@/lib/auth";
 import prisma from "@/lib/db";
 
 
 export const getClientAppointments = async () => {
     const userData = await userAuth()
+
+    if(userData.error) return 
 
     return await prisma.reservation.findMany({
         where: {
