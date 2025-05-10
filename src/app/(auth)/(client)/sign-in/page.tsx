@@ -27,7 +27,7 @@ export default function SignIn() {
   
     const onSubmit = async (data: FormData) => {
       try {
-        const response = await fetch("/api/sign-in", {
+        const response = await fetch("/api/user-sign-in", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

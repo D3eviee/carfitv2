@@ -1,3 +1,11 @@
+type NavbarProfileProps = {
+  name:string
+  phone?: string
+  image:string
+  role: string
+  category?: string
+}
+
 type WorkingDay = {
   isOpen : boolean,
   day: string,

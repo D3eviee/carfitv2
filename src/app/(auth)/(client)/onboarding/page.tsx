@@ -7,14 +7,13 @@ import FormHeader from "@/components/form-header";
 import {useForm} from 'react-hook-form'
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import bcrypt from "bcryptjs";
 
 export default function Onboardoarding() {
 
   const [error, setError] = useState<string>('')
   const router = useRouter();
 
-  interface ClientOnboadringData  {
+  type ClientOnboadringData  = {
     name: string
     email: string
     password: string
@@ -31,8 +30,7 @@ export default function Onboardoarding() {
   });
 
   const onSubmit = async (data: ClientOnboadringData) => {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-    const userData = {...data, password:hashedPassword}
+    
 
     try {
       const response = await fetch("/api/onboarding", {
@@ -40,15 +38,15 @@ export default function Onboardoarding() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
-      });
+        body: JSON.stringify(data),
+
+      },);
 
       const responseData = await response.json();
 
       if (response.ok) {
-       
         router.push('/')
-      } else if(responseData.status == 409){
+      } else if(responseData.status == 404){
         setError(responseData.error)
       }else{
         setError(responseData.error)

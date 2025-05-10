@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
         const {email, password } = await req.json();
 
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = await prisma.client.findUnique({
             where: { email: email },
         });
 

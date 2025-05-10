@@ -1,21 +1,64 @@
 'use server'
-import { createServiceSession, serviceAuth } from "@/lib/session";
+import { createServiceSession} from "@/lib/session";
 import { OnboardingState } from "@/lib/store";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
+
+import { authRole, businessAuth } from "@/lib/auth";
 import prisma from "@/lib/db";
 
-export const logout = async () => {
-    const cookieSession = await cookies();
-    cookieSession.delete('ClientToken')
-    redirect('/')
+// FROM HERE REFACTORING 
+
+// NAVBARS
+// returning data for navbar profile menu, depending on the type of logged user
+export const getNavbarUserData = async () => {
+    const auth = await authRole()
+
+    if(!auth){
+        redirect('/')
+    }
+
+    if(auth.role === "USER"){        
+        const userData = await prisma.client.findUnique({
+            where: {
+                id: auth.id
+            },
+            select: {
+                name: true,
+                phone: true,
+                image: true
+            }
+        })
+
+        return {
+            ...userData,
+            role: auth.role
+
+        }
+    }
+
+    if(auth.role === "BUSINESS"){        
+        const businessData = await prisma.business.findUnique({
+            where: {
+                id: auth.id
+            },
+            select: {
+                name: true,
+                category: true,
+                image: true
+            }
+        })
+        return {...businessData, role: auth.role}
+    }
 }
+
+//////////
 
 export const checkIfEmailExists = async (email: string) => {
     try {
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = await prisma.client.findUnique({
             where: { email },
         });
 
@@ -109,7 +152,7 @@ export const getServiceData = async (id: string) => {
 
 export const getWorkingTimeData = async (businessId: string) => {
     try {
-        const businessData = await serviceAuth()
+        const businessData = await businessAuth()
 
         const serviceData = await prisma.workingDay.findMany({
             where: {
@@ -272,21 +315,21 @@ export const addNewReservation = async (reservation:AddNewReservationProps) => {
     }
 }
 
+
+// creates link to user profile photo and puts it into database
 export const putProfileImageToDatabase = async (userId:string, imageKey:string) => {
     const s3Link = `https://carfitapp.s3.eu-north-1.amazonaws.com/${imageKey}`
 
     const putImage  = await prisma.client.update({
-        where: {
-            id: userId
-        },
-        data: {
-            image: s3Link
-        }
+        where: { id: userId},
+        data: { image: s3Link }
     })
     
     return putImage
 }
 
+
+// creates link to service gallery photo and puts it into database
 export const putBusinessImageToGallery = async (serviceId:string, imageKey:string) => {
     const s3Link = `https://carfitapp.s3.eu-north-1.amazonaws.com/${imageKey}`
 

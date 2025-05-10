@@ -1,21 +1,7 @@
 'use server'
-import { cookies } from "next/headers";
-import jwt from 'jsonwebtoken';
+import { userAuth } from "@/data/user/user-auth";
 import prisma from "@/lib/db";
-import { serviceAuth } from "@/lib/session";
 
-export const userAuth = async () => {
-    const cookieSession = await cookies();
-    const token = cookieSession.get("ClientToken")?.value
-
-    try {
-        const decoded = jwt.verify(token!, process.env.JWT_SECRET as string) as jwt.JwtPayload;
-        const { id } = decoded;
-        return { id };
-    } catch (err: any) {
-        return { error: "Unauthorized " + err.message };
-    }
-}
 
 export const getClientAppointments = async () => {
     const userData = await userAuth()

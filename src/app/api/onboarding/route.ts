@@ -1,27 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import {createSession} from "@/lib/session";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, phone,  email, password } = await req.json();
+        const { name, phone,  email, password } = await req.json()
 
-        // Check if user already exists
-        const existingUser = await prisma.client.findUnique({
-            where: { email },
-        });
-        if (existingUser) {
+        // check whether the user with that phone, email exsists
+        const emailExists = await prisma.client.findUnique({
+            where: {email}
+        })
+
+        const phoneExist = await prisma.client.findUnique({
+            where: {email}
+        })
+
+        if (emailExists) {
             return NextResponse.json({ error: "User with this email already exists" }, { status: 409 });
         }
 
-        //create new user and add to database
+        if (phoneExist) {
+            return NextResponse.json({ error: "User with this phone number already exists" }, { status: 409 });
+        }
+
+        // if user does not exist: hash password and create user in the database
+        const securePassword = await bcrypt.hash(password, 10)
         const user = await prisma.client.create({
             data: {
                 name,
                 email,
                 phone,
-                password
-            },
+                securePassword
+            }
         })
 
         //create sesssion

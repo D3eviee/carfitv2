@@ -7,7 +7,6 @@ import AppointmenDateCell from "@/components/dashboard/appointments/appointments
 import AppointmenPriceCell from "@/components/dashboard/appointments/appointments-price-cell"
 import AppointmentStatusCell from "@/components/dashboard/appointments/appointments-status-cell"
 import { ArrowDown, ArrowDownUp, ArrowUp, Filter, Search, X, } from "lucide-react";
-import { serviceAuth } from "@/lib/session";
 import { useState } from "react";
 
 export default function ServiceVisits() {
@@ -42,7 +41,7 @@ export default function ServiceVisits() {
   const {data: user} = useQuery({
     queryKey: ["getAppointmentsTableData"],
     queryFn: async () => {
-      const result = await serviceAuth()
+      const result = await businessAuth()
       return result
     }
   })

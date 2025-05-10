@@ -1,8 +1,7 @@
 'use server'
+import { businessAuth } from "@/lib/auth";
 import prisma from "@/lib/db"
-import { serviceAuth } from "@/lib/session";
 import { format, getDate, getMonth, getYear, isSameDay, set, subDays, subHours } from "date-fns";
-import { boolean } from "zod";
 
 
 type  GetAppointmentsForMonthIntervalProps = {
@@ -10,7 +9,6 @@ type  GetAppointmentsForMonthIntervalProps = {
 }
 
 export const getAppointmentsForWeekInterval = async (weekInterval: Date[]) => {
-
     return await prisma.reservation.findMany({
       where: {
         reservationStart: {
@@ -117,7 +115,7 @@ export const getAppointmentsTableData = async (businessId: string) => {
 //FUNCTION FOR ADDING SERVICE CATEGORY
 export const addNewCategory = async (categoryName:string) => {
   try {
-      const businessId = await serviceAuth();
+      const businessId = await businessAuth();
 
       // WHETHER CATEGORY ALREADY EXISTS
       const isExisting = await prisma.categories.findFirst({
@@ -141,7 +139,7 @@ export const addNewCategory = async (categoryName:string) => {
 //FUNCTION FOR EDITING SERVICE CATEGORY
 export const editCategory = async (categoryId:string, categoryName: string) => {
   try {
-      const businessId = await serviceAuth()
+      const businessId = await businessAuth()
 
       await prisma.categories.update({
           where: {id: categoryId, service: businessId.id},
@@ -171,7 +169,7 @@ export const deleteCategory = async (categoryId:string) => {
 //FUNCTION FOR GETTING CATEGORY AND SERVICE DATA FOR SERVICES PAGE
 export const getServicesForBusiness = async () => {
   try {
-      const businessId = await serviceAuth()
+      const businessId = await businessAuth()
 
       const servicesData = await prisma.categories.findMany({
           where: {
@@ -220,7 +218,7 @@ export type AddNewServiceProps = {
 //FUNCTION FOR ADDING SERVICE
 export const addNewService = async (serviceData: serviceModalProps) => {
   try {
-      const businessId = await serviceAuth()
+      const businessId = await businessAuth()
 
       const newsSrvice = await prisma.service.create({
           data: {
@@ -263,7 +261,7 @@ export const getTodayReservations = async () => {
   const todayDay = getDate(date) 
 
   try {
-    const business = await serviceAuth()
+    const business = await businessAuth()
 
     const reservationsThisMonth = await prisma.reservation.findMany({
       where: {
@@ -304,7 +302,7 @@ export const getLastSevenDaysAppointmentNumbers = async () => {
   const startDate = subDays(endDate, 6)
 
   try {
-    const business = await serviceAuth()
+    const business = await businessAuth()
 
     const reservationsLastSevenDays = await prisma.reservation.findMany({
       where: {
@@ -358,7 +356,7 @@ export const getLastSevenDaysServicesNumbers = async () => {
   const startDate = subDays(endDate, 6)
 
   try {
-    const business = await serviceAuth()
+    const business = await businessAuth()
 
     const reservationsLastSevenDays = await prisma.reservation.findMany({
       where: {
@@ -409,7 +407,7 @@ export const getActiveMonthAppointments = async(date:Date) => {
   const activeDateMonth = selectedDate.getMonth()+1
 
   try{
-      const businessData = await serviceAuth()
+      const businessData = await businessAuth()
 
       const reservationForDay = await prisma.reservation.findMany({
           where: {
@@ -457,7 +455,7 @@ type AddNewReservationManuallyProps =  {
 //FUNCTIO FOR ADDING RESERVATION MANUALLY
 export const addNewReservationManually = async (reservation:AddNewReservationManuallyProps) => {
   try{
-      const businessData = await serviceAuth()
+      const businessData = await businessAuth()
 
       const newReservation = await prisma.reservation.create({
           data: {
@@ -495,7 +493,7 @@ export const addNewReservationManually = async (reservation:AddNewReservationMan
 
 export const getSettingsDataForBusiness = async () => {
   try {
-    const business = await serviceAuth()
+    const business = await businessAuth()
 
     const serviceSettingsData = await prisma.business.findFirst({
       where: {
@@ -525,7 +523,7 @@ export const getSettingsDataForBusiness = async () => {
 //FUNCTION FOR UPDATING SETTING IN DATABASE
 export const setSettingDataForBusiness = async (data:Record<string, string>) => {
   try {
-    const business = await serviceAuth()
+    const business = await businessAuth()
 
     const setServiceSettingsData = await prisma.business.update({
       where: {
@@ -545,7 +543,7 @@ export const setSettingDataForBusiness = async (data:Record<string, string>) => 
 //FUNCTION FOR UPDATING SETTING IN DATABASE
 export const getWorkingTimeData = async () => {
   try {
-      const businessData = await serviceAuth()
+      const businessData = await businessAuth()
 
       const workingTimeData = await prisma.workingDay.findMany({
           where: {
@@ -586,7 +584,7 @@ type SetWorkingTimeDataDaysDataProps =  {
 //FUNCTION FOR UPDATING WORKING DAYS
 export const setWorkingTimeData = async (daysData:SetWorkingTimeDataDaysDataProps) => {
   try {
-    const businessData = await serviceAuth();
+    const businessData = await businessAuth();
 
     const updatePromises = daysData.map((dayData) => {
       return prisma.workingDay.update({
@@ -614,7 +612,7 @@ export const setWorkingTimeData = async (daysData:SetWorkingTimeDataDaysDataProp
 
 // getting user images on gallery page
 export const getBusinessImages = async () => {
-  const businessData = await serviceAuth()
+  const businessData = await businessAuth()
 
   try {
       const businessImages = await prisma.image.findMany({

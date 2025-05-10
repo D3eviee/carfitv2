@@ -1,7 +1,6 @@
 import LandingSearchForm from "@/components/landing/landing-search-form";
 import LandingTopServiceCard from "@/components/landing/landing-top-service-card";
 import LandingRecommendedServicesSection from "@/components/landing/landing-recommended-services-section";
-import { Suspense } from "react";
 
 
 export default async function Landing() {
@@ -27,11 +26,8 @@ export default async function Landing() {
           ))}
         </div>
       </div>
-        
-      <Suspense fallback={<p className="text-black">Loading...</p>}>
-        <LandingRecommendedServicesSection />
-      </Suspense>
-      
+
+      <LandingRecommendedServicesSection />
     </div>
   );
 }
